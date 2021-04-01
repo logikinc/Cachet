@@ -20,10 +20,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use McCool\LaravelAutoPresenter\HasPresenter;
 
+/**
+ * This is the component group model class.
+ *
+ * @author James Brooks <james@alt-three.com>
+ */
 class ComponentGroup extends Model implements HasPresenter
 {
-    use SearchableTrait, SortableTrait, ValidatingTrait;
-
+    use SearchableTrait;
+    use SortableTrait;
+    use ValidatingTrait;
     /**
      * Viewable only authenticated users.
      *
@@ -76,7 +82,7 @@ class ComponentGroup extends Model implements HasPresenter
     public $rules = [
         'name'      => 'required|string',
         'order'     => 'required|int',
-        'collapsed' => 'required|int',
+        'collapsed' => 'required|int|between:0,4',
         'visible'   => 'required|bool',
     ];
 
@@ -120,7 +126,7 @@ class ComponentGroup extends Model implements HasPresenter
      */
     public function components()
     {
-        return $this->hasMany(Component::class, 'group_id', 'id')->orderBy('order');
+        return $this->hasMany(Component::class, 'group_id', 'id');
     }
 
     /**
@@ -140,7 +146,7 @@ class ComponentGroup extends Model implements HasPresenter
      */
     public function enabled_components()
     {
-        return $this->components()->enabled();
+        return $this->components()->enabled()->orderBy('order');
     }
 
     /**

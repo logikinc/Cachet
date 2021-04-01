@@ -11,9 +11,12 @@
 
 namespace CachetHQ\Cachet\Console\Commands;
 
+use CachetHQ\Cachet\Models\User;
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Contracts\Events\Dispatcher;
 
 /**
  * This is the install command class.
@@ -37,24 +40,54 @@ class InstallCommand extends Command
     protected $description = 'Install Cachet';
 
     /**
+     * The events instance.
+     *
+     * @var \Illuminate\Contracts\Events\Dispatcher
+     */
+    protected $events;
+
+    /**
+     * Create a new command instance.
+     *
+     * @param Dispatcher $events
+     */
+    public function __construct(Dispatcher $events)
+    {
+        $this->events = $events;
+
+        parent::__construct();
+    }
+
+    /**
      * Execute the console command.
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
-        if (!$this->confirm('Do you want to install Cachet?')) {
-            $this->line('Installation aborted. Goodbye!');
-
-            return;
+        if ($this->confirm('Do you want to configure Cachet before installing?')) {
+            $this->configureEnvironmentFile();
+            $this->configureKey();
+            $this->configureDatabase();
+            $this->configureDrivers();
+            $this->configureMail();
+            $this->configureCachet();
+            $this->configureUser();
         }
 
-        $this->configureEnvironmentFile();
-        $this->configureKey();
-        $this->configureDatabase();
-        $this->configureDrivers();
-        $this->configureMail();
-        $this->configureCachet();
+        $this->line('Installing Cachet...');
+
+        $this->events->fire('command.installing', $this);
+        $this->events->fire('command.generatekey', $this);
+        $this->events->fire('command.cacheconfig', $this);
+        $this->events->fire('command.cacheroutes', $this);
+        $this->events->fire('command.publishvendors', $this);
+        $this->events->fire('command.runmigrations', $this);
+        $this->events->fire('command.runseeding', $this);
+        $this->events->fire('command.updatecache', $this);
+        $this->events->fire('command.linkstorage', $this);
+        $this->events->fire('command.extrastuff', $this);
+        $this->events->fire('command.installed', $this);
 
         $this->info('Cachet is installed ⚡');
     }
@@ -110,7 +143,7 @@ class InstallCommand extends Command
 
         $config['DB_DRIVER'] = $this->choice('Which database driver do you want to use?', [
             'mysql'      => 'MySQL',
-            'postgresql' => 'PostgreSQL',
+            'pgsql'      => 'PostgreSQL',
             'sqlite'     => 'SQLite',
         ], $config['DB_DRIVER']);
 
@@ -118,6 +151,9 @@ class InstallCommand extends Command
             $config['DB_DATABASE'] = $this->ask('Please provide the full path to your SQLite file.', $config['DB_DATABASE']);
         } else {
             $config['DB_HOST'] = $this->ask("What is the host of your {$config['DB_DRIVER']} database?", $config['DB_HOST']);
+            if ($config['DB_HOST'] === 'localhost' && $config['DB_DRIVER'] === 'mysql') {
+                $this->warn("Using 'localhost' will result in the usage of a local unix socket. Use 127.0.0.1 if you want to connect over TCP");
+            }
 
             $config['DB_DATABASE'] = $this->ask('What is the name of the database that Cachet should use?', $config['DB_DATABASE']);
 
@@ -125,6 +161,7 @@ class InstallCommand extends Command
 
             $config['DB_PASSWORD'] = $this->secret('What password should we connect with?', $config['DB_PASSWORD']);
 
+            $config['DB_PORT'] = $config['DB_DRIVER'] === 'mysql' ? 3306 : 5432;
             if ($this->confirm('Is your database listening on a non-standard port number?')) {
                 $config['DB_PORT'] = $this->anticipate('What port number is your database using?', [3306, 5432], $config['DB_PORT']);
             }
@@ -279,10 +316,13 @@ class InstallCommand extends Command
     /**
      * Configure Cachet.
      *
+     * @param array $config
+     *
      * @return void
      */
-    protected function configureCachet()
+    protected function configureCachet(array $config = [])
     {
+        $config = [];
         if ($this->confirm('Do you wish to use Cachet Beacon?')) {
             $config['CACHET_BEACON'] = 'true';
         }
@@ -295,6 +335,33 @@ class InstallCommand extends Command
         foreach ($config as $setting => $value) {
             $this->writeEnv($setting, $value);
         }
+    }
+
+    /**
+     * Configure the first user.
+     *
+     * @return void
+     */
+    protected function configureUser()
+    {
+        if (!$this->confirm('Do you want to create an admin user?')) {
+            return;
+        }
+
+        // We need to refresh the config to get access to the newly connected database.
+        $this->getFreshConfiguration();
+
+        // Now we need to install the application.
+        // $this->call('cachet:install');
+
+        $user = [
+            'username' => $this->ask('Please enter your username'),
+            'email'    => $this->ask('Please enter your email'),
+            'password' => $this->secret('Please enter your password'),
+            'level'    => User::LEVEL_ADMIN,
+        ];
+
+        User::create($user);
     }
 
     /**
@@ -338,6 +405,17 @@ class InstallCommand extends Command
     }
 
     /**
+     * Boot a fresh copy of the application configuration.
+     *
+     * @return void
+     */
+    protected function getFreshConfiguration()
+    {
+        $app = require $this->laravel->bootstrapPath().'/app.php';
+        $app->make(Kernel::class)->bootstrap();
+    }
+
+    /**
      * Writes to the .env file with given parameters.
      *
      * @param string $key
@@ -357,11 +435,12 @@ class InstallCommand extends Command
             $envKey = strtoupper($key);
             $envValue = env($envKey) ?: 'null';
 
-            file_put_contents($path, str_replace(
-                "{$envKey}={$envValue}",
-                "{$envKey}={$value}",
-                file_get_contents($path)
-            ));
+            $envFileContents = file_get_contents($path);
+            $envFileContents = str_replace("{$envKey}={$envValue}", "{$envKey}={$value}", $envFileContents, $count);
+            if ($count < 1 && $envValue === 'null') {
+                $envFileContents = str_replace("{$envKey}=", "{$envKey}={$value}", $envFileContents);
+            }
+            file_put_contents($path, $envFileContents);
         } catch (InvalidPathException $e) {
             throw $e;
         }

@@ -14,7 +14,7 @@ return [
     'components' => [
         'last_updated' => 'Update terakhir :timestamp',
         'status'       => [
-            0 => 'Unknown',
+            0 => 'Tidak diketahui',
             1 => 'Operasional',
             2 => 'Masalah Kinerja',
             3 => 'Gagal Sebagian',
@@ -23,19 +23,20 @@ return [
         'group' => [
             'other' => 'Komponen Lain',
         ],
+        'select_all'   => 'Select All',
+        'deselect_all' => 'Deselect All',
     ],
 
     // Incidents
     'incidents' => [
-        'none'          => 'Tidak ada insiden yang dilaporkan',
-        'past'          => 'Insiden sebelumnya',
-        'previous_week' => 'Pekan sebelumnya',
-        'next_week'     => 'Pekan selanjutnya',
-        'stickied'      => 'Insiden sticky',
-        'scheduled'     => 'Jadwal Pemeliharaan',
-        'scheduled_at'  => ', dijadwalkan pada :timestamp',
-        'posted'        => 'Dikirim: timestamp',
-        'status'        => [
+        'none'         => 'Tidak ada insiden yang dilaporkan',
+        'past'         => 'Insiden sebelumnya',
+        'stickied'     => 'Insiden sticky',
+        'scheduled'    => 'Pemeliharaan',
+        'scheduled_at' => ', dijadwalkan pada :timestamp',
+        'posted'       => 'Posted :timestamp by :username',
+        'posted_at'    => 'Dikirim: :timestamp',
+        'status'       => [
             1 => 'Investigasi',
             2 => 'Teridentifikasi',
             3 => 'Dimonitor',
@@ -46,17 +47,17 @@ return [
     // Schedule
     'schedules' => [
         'status' => [
-            0 => 'Upcoming',
-            1 => 'In Progress',
-            2 => 'Complete',
+            0 => 'Mendatang',
+            1 => 'Sedang berlangsung',
+            2 => 'Selesai',
         ],
     ],
 
     // Service Status
     'service' => [
-        'good'  => '[0,1] sistem operasional | [2, Inf] Semua sistem operasional',
-        'bad'   => '[0,1] sistem ini sedang mengalami masalah | [2, Inf] Beberapa sistem mengalami masalah',
-        'major' => '[0,1] Layanan mengalami outage besar | [2, Inf] Beberapa sistem mengalami outage besar',
+        'good'  => '[0,1]System operational|[2,*]All systems are operational',
+        'bad'   => '[0,1]Sistem ini sedang mengalami masalah|[2,*]Beberapa sistem mengalami masalah',
+        'major' => '[0,1]Sistem mengalami masalah besar|[2,*]Beberapa sistem mengalami masalah besar',
     ],
 
     'api' => [
@@ -76,22 +77,29 @@ return [
 
     // Subscriber
     'subscriber' => [
-        'subscribe'   => 'Ikuti newsletter untuk mendapat update terbaru.',
-        'unsubscribe' => 'Unsubscribe at :link',
-        'button'      => 'Daftar',
-        'manage'      => [
-            'no_subscriptions' => 'Anda saat ini terdaftar untuk semua update.',
-            'my_subscriptions' => 'Anda saat ini berlangganan update berikut.',
+        'subscribe'           => 'Subscribe to status changes and incident updates',
+        'unsubscribe'         => 'Unsubscribe',
+        'button'              => 'Daftar',
+        'manage_subscription' => 'Manage subscription',
+        'manage'              => [
+            'notifications'       => 'Notifikasi',
+            'notifications_for'   => 'Manage notifications for',
+            'no_subscriptions'    => 'Anda saat ini terdaftar untuk semua update.',
+            'update_subscription' => 'Update Subscription',
+            'my_subscriptions'    => 'Anda saat ini berlangganan update berikut.',
+            'manage_at_link'      => 'Manage your subscriptions at :link',
         ],
         'email' => [
-            'subscribe'          => 'Langganan update email.',
-            'subscribed'         => 'Anda berhasil terdaftar pada notifikasi email, mohon periksa email anda untuk mengkonfirmasi pendaftaran ini.',
-            'verified'           => 'Pendaftaran newsletter anda berhasil dikonfirmasi. Terima kasih!',
-            'manage'             => 'Mengelola langganan Anda',
-            'unsubscribe'        => 'Hapus saya dari update email.',
-            'unsubscribed'       => 'Langganan email anda sudah dihentikan.',
-            'failure'            => 'Ada yang salah dengan sistem langganan email.',
-            'already-subscribed' => 'Tidak bisa mendaftarkan :email karena sudah berlangganan.',
+            'manage_subscription' => 'We\'ve sent you an email, please click the link to manage your subscription',
+            'subscribe'           => 'Langganan update email.',
+            'subscribed'          => 'Anda berhasil terdaftar pada notifikasi email, mohon periksa email anda untuk mengkonfirmasi pendaftaran ini.',
+            'updated-subscribe'   => 'You\'ve succesfully updated your subscriptions.',
+            'verified'            => 'Pendaftaran newsletter anda berhasil dikonfirmasi. Terima kasih!',
+            'manage'              => 'Mengelola langganan Anda',
+            'unsubscribe'         => 'Hapus saya dari update email.',
+            'unsubscribed'        => 'Langganan email anda sudah dihentikan.',
+            'failure'             => 'Ada yang salah dengan sistem langganan email.',
+            'already-subscribed'  => 'Tidak bisa mendaftarkan :email karena sudah berlangganan.',
         ],
     ],
 
@@ -118,9 +126,18 @@ return [
         ],
     ],
 
+    // Meta descriptions
+    'meta' => [
+        'description' => [
+            'incident'  => 'Rincian dan update tentang insiden :name yang terjadi pada :date',
+            'schedule'  => 'Rincian tentang jadwal pemeliharaan :name mulai :startDate',
+            'subscribe' => 'Berlangganan :app untuk menerima update insiden dan jadwal pemeliharaan',
+            'overview'  => 'Tetap up to date dengan layanan terbaru dari :app.',
+        ],
+    ],
+
     // Other
     'home'            => 'Depan',
-    'description'     => 'Tetap up to date dengan layanan terbaru dari :app.',
     'powered_by'      => 'Ditenagai oleh <a href="https://cachethq.io" class="links"> Cachet</a>.',
     'timezone'        => 'Waktu dalam :timezone.',
     'about_this_site' => 'Tentang situs ini',

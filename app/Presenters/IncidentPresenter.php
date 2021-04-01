@@ -30,7 +30,14 @@ class IncidentPresenter extends BasePresenter implements Arrayable
     protected $dates;
 
     /**
-     * Inciden icon lookup.
+     * Flag for the latest function.
+     *
+     * @var bool
+     */
+    protected $latest = false;
+
+    /**
+     * Incident icon lookup.
      *
      * @var array
      */
@@ -53,8 +60,6 @@ class IncidentPresenter extends BasePresenter implements Arrayable
     public function __construct(DateFactory $dates, Incident $resource)
     {
         $this->dates = $dates;
-
-        parent::__construct($resource);
     }
 
     /**
@@ -250,9 +255,11 @@ class IncidentPresenter extends BasePresenter implements Arrayable
      */
     public function latest()
     {
-        if ($update = $this->wrappedObject->updates()->orderBy('created_at', 'desc')->first()) {
-            return $update;
+        if (is_bool($this->latest)) {
+            $this->latest = $this->wrappedObject->updates()->first();
         }
+
+        return $this->latest;
     }
 
     /**
@@ -280,6 +287,16 @@ class IncidentPresenter extends BasePresenter implements Arrayable
     }
 
     /**
+     * Return the meta in a key value pair.
+     *
+     * @return array
+     */
+    public function meta()
+    {
+        return $this->wrappedObject->meta->pluck('value', 'key')->all();
+    }
+
+    /**
      * Convert the presenter instance to an array.
      *
      * @return string[]
@@ -294,6 +311,7 @@ class IncidentPresenter extends BasePresenter implements Arrayable
             'latest_icon'         => $this->latest_icon(),
             'permalink'           => $this->permalink(),
             'duration'            => $this->duration(),
+            'meta'                => $this->meta(),
             'occurred_at'         => $this->occurred_at(),
             'created_at'          => $this->created_at(),
             'updated_at'          => $this->updated_at(),

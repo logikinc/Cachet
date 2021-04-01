@@ -1,5 +1,5 @@
-@if($component_groups->isNotEmpty())
-@foreach($component_groups as $componentGroup)
+@if($componentGroups->isNotEmpty())
+@foreach($componentGroups as $componentGroup)
 <ul class="list-group components">
     @if($componentGroup->enabled_components->isNotEmpty())
     <li class="list-group-item group-name">
@@ -12,23 +12,23 @@
     </li>
 
     <div class="group-items {{ $componentGroup->is_collapsed ? "hide" : null }}">
-        @each('partials.component', $componentGroup->enabled_components()->orderBy('order')->get(), 'component')
+        @each('partials.component', $componentGroup->enabled_components, 'component')
     </div>
     @endif
 </ul>
 @endforeach
 @endif
 
-@if($ungrouped_components->isNotEmpty())
+@if($ungroupedComponents->isNotEmpty())
 <ul class="list-group components">
     <li class="list-group-item group-name">
         <strong>{{ trans('cachet.components.group.other') }}</strong>
 
         <div class="pull-right">
-            <i class="ion ion-ios-circle-filled text-component-{{ $ungrouped_components->max('status') }} {{ $ungrouped_components->sortByDesc('status')->first()->status_color }}" data-toggle="tooltip" title="{{ $ungrouped_components->sortByDesc('status')->first()->human_status }}"></i>
+            <i class="ion ion-ios-circle-filled text-component-{{ $ungroupedComponents->max('status') }} {{ $ungroupedComponents->first()->status_color }}" data-toggle="tooltip" title="{{ $ungroupedComponents->first()->human_status }}"></i>
         </div>
     </li>
 
-    @each('partials.component', $ungrouped_components, 'component')
+    @each('partials.component', $ungroupedComponents, 'component')
 </ul>
 @endif

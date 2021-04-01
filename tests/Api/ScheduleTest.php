@@ -11,6 +11,9 @@
 
 namespace CachetHQ\Tests\Cachet\Api;
 
+use CachetHQ\Cachet\Models\Schedule;
+use Illuminate\Support\Arr;
+
 /**
  * This is the schedule test class.
  *
@@ -18,31 +21,29 @@ namespace CachetHQ\Tests\Cachet\Api;
  */
 class ScheduleTest extends AbstractApiTestCase
 {
-    public function testGetSchedules()
+    public function test_can_get_all_schedules()
     {
-        $schedules = factory('CachetHQ\Cachet\Models\Schedule', 3)->create();
+        $schedules = factory(Schedule::class, 3)->create();
 
-        $this->get('/api/v1/schedules');
+        $response = $this->json('GET', '/api/v1/schedules');
 
-        $this->assertResponseOk();
-
-        $this->seeJson(['id' => $schedules[0]->id]);
-        $this->seeJson(['id' => $schedules[1]->id]);
-        $this->seeJson(['id' => $schedules[2]->id]);
+        $response->assertStatus(200);
+        $response->assertJsonFragment(['id' => $schedules[0]->id]);
+        $response->assertJsonFragment(['id' => $schedules[1]->id]);
+        $response->assertJsonFragment(['id' => $schedules[2]->id]);
     }
 
-    public function testGetSchedule()
+    public function test_can_get_single_schedule()
     {
-        $schedule = factory('CachetHQ\Cachet\Models\Schedule')->create();
+        $schedule = factory(Schedule::class)->create();
 
-        $this->get('/api/v1/schedules/'.$schedule->id);
+        $response = $this->json('GET', '/api/v1/schedules/'.$schedule->id);
 
-        $this->assertResponseOk();
-
-        $this->seeJson($schedule->toArray());
+        $response->assertStatus(200);
+        $response->assertJsonFragment(['name' => $schedule->name]);
     }
 
-    public function testCreateSchedule()
+    public function test_can_create_schedule()
     {
         $this->beUser();
 
@@ -53,35 +54,35 @@ class ScheduleTest extends AbstractApiTestCase
             'scheduled_at' => date('Y-m-d H:i'),
         ];
 
-        $this->post('/api/v1/schedules/', $schedule);
+        $response = $this->json('POST', '/api/v1/schedules/', $schedule);
 
-        $this->assertResponseOk();
+        Arr::forget($schedule, 'scheduled_at');
 
-        $this->seeJson(array_forget($schedule, 'scheduled_at'));
+        $response->assertStatus(200);
+        $response->assertJsonFragment($schedule);
     }
 
-    public function testUpdateSchedule()
+    public function test_can_update_schedule()
     {
         $this->beUser();
 
-        $schedule = factory('CachetHQ\Cachet\Models\Schedule')->create();
+        $schedule = factory(Schedule::class)->create();
 
-        $this->put('/api/v1/schedules/'.$schedule->id, [
+        $response = $this->json('PUT', '/api/v1/schedules/'.$schedule->id, [
             'name' => 'Updated schedule',
         ]);
 
-        $this->assertResponseOk();
-
-        $this->seeJson(['name' => 'Updated schedule']);
+        $response->assertStatus(200);
+        $response->assertJsonFragment(['name' => 'Updated schedule']);
     }
 
-    public function testDeleteSchedule()
+    public function test_can_delete_schedule()
     {
         $this->beUser();
-        factory('CachetHQ\Cachet\Models\Schedule')->create();
+        factory(Schedule::class)->create();
 
-        $this->delete('/api/v1/schedules/1');
+        $response = $this->json('DELETE', '/api/v1/schedules/1');
 
-        $this->assertResponseStatus(204);
+        $response->assertStatus(204);
     }
 }

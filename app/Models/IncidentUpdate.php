@@ -24,7 +24,8 @@ use McCool\LaravelAutoPresenter\HasPresenter;
  */
 class IncidentUpdate extends Model implements HasPresenter
 {
-    use SortableTrait, ValidatingTrait;
+    use SortableTrait;
+    use ValidatingTrait;
 
     /**
      * The attributes that should be casted to native types.
@@ -81,6 +82,16 @@ class IncidentUpdate extends Model implements HasPresenter
     public function incident()
     {
         return $this->belongsTo(Incident::class);
+    }
+
+    /**
+     * Get the user relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     /**

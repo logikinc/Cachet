@@ -16,15 +16,29 @@ return [
 
     // Incidents
     'incidents' => [
-        'title'                    => 'Incidentes &amp; Agendamentos',
+        'title'                    => 'Incidents & Maintenance',
         'incidents'                => 'Ocorrências',
-        'logged'                   => '{0} Não existem incidentes, bom trabalho.|Você registrou um incidente.|Você reportou <strong>:count</strong> incidentes.',
+        'logged'                   => '{0}There are no incidents, good work.|[1]You have logged one incident.|[2,*]You have reported <strong>:count</strong> incidents.',
         'incident-create-template' => 'Criar template',
         'incident-templates'       => 'Template de incidentes',
-        'updates'                  => '{0} Zero Updates|One Update|:count Updates',
+        'updates'                  => [
+            'title'   => 'Incident updates for :incident',
+            'count'   => '{0}Zero Updates|[1]One Update|[2]Two Updates|[3,*]Several Updates',
+            'add'     => [
+                'title'   => 'Create new incident update',
+                'success' => 'Your new incident update has been created.',
+                'failure' => 'Something went wrong with the incident update.',
+            ],
+            'edit' => [
+                'title'   => 'Edit incident update',
+                'success' => 'The incident update has been updated.',
+                'failure' => 'Something went wrong updating the incident update',
+            ],
+        ],
+        'reported_by'              => 'Reported :timestamp by :user',
         'add'                      => [
             'title'   => 'Adicionar um incidente',
-            'success' => 'Incidente adicionado.',
+            'success' => 'Incident added.',
             'failure' => 'There was an error adding the incident, please try again.',
         ],
         'edit' => [
@@ -36,17 +50,13 @@ return [
             'success' => 'O incidente foi apagado e não será mais mostrado na sua página de estado.',
             'failure' => 'The incident could not be deleted, please try again.',
         ],
-        'update' => [
-            'title'    => 'Create new incident update',
-            'subtitle' => 'Add an update to <strong>:incident</strong>',
-        ],
 
         // Incident templates
         'templates' => [
             'title' => 'Template de incidentes',
             'add'   => [
                 'title'   => 'Criar um modelo de incidente',
-                'message' => 'Adicione um esboço de incidente.',
+                'message' => 'Create your first incident template.',
                 'success' => 'Your new incident template has been created.',
                 'failure' => 'Something went wrong with the incident template.',
             ],
@@ -64,22 +74,22 @@ return [
 
     // Incident Maintenance
     'schedule' => [
-        'schedule'     => 'Manutenção Agendada',
-        'logged'       => '{0} Não existem agendamentos, bom trabalho.|Você introduziu um agendamento.|Você reportou <strong>:count</strong> agendamentos.',
+        'schedule'     => 'Maintenance',
+        'logged'       => '{0}There has been no Maintenance, good work.|[1]You have logged one schedule.|[2,*]You have reported <strong>:count</strong> schedules.',
         'scheduled_at' => 'Agendada em :timestamp',
         'add'          => [
-            'title'   => 'Adicionar Manutenção Agendada',
-            'success' => 'Agendamento adicionado.',
-            'failure' => 'Something went wrong adding the schedule, please try again.',
+            'title'   => 'Add Maintenance',
+            'success' => 'Maintenance added.',
+            'failure' => 'Something went wrong adding the Maintenance, please try again.',
         ],
         'edit' => [
-            'title'   => 'Editar Manutenção Agendada',
-            'success' => 'Agendamento actualizado com sucesso!',
-            'failure' => 'Something went wrong editing the schedule, please try again.',
+            'title'   => 'Edit Maintenance',
+            'success' => 'Maintenance has been updated!',
+            'failure' => 'Something went wrong editing the Maintenance, please try again.',
         ],
         'delete' => [
-            'success' => 'The scheduled maintenance has been deleted and will not show on your status page.',
-            'failure' => 'The scheduled maintenance could not be deleted, please try again.',
+            'success' => 'The Maintenance has been deleted and will not show on your status page.',
+            'failure' => 'The Maintenance could not be deleted, please try again.',
         ],
     ],
 
@@ -146,13 +156,15 @@ return [
     ],
     // Subscribers
     'subscribers' => [
-        'subscribers'      => 'Assinantes',
-        'description'      => 'Subscribers will receive email updates when incidents are created or components are updated.',
-        'verified'         => 'Verificado',
-        'not_verified'     => 'Não Verificado',
-        'subscriber'       => ':email, subscribed :date',
-        'no_subscriptions' => 'Subscribed to all updates',
-        'add'              => [
+        'subscribers'          => 'Assinantes',
+        'description'          => 'Subscribers will receive email updates when incidents are created or components are updated.',
+        'description_disabled' => 'To use this feature, you need allow people to signup for notifications.',
+        'verified'             => 'Verificado',
+        'not_verified'         => 'Não Verificado',
+        'subscriber'           => ':email, subscribed :date',
+        'no_subscriptions'     => 'Subscribed to all updates',
+        'global'               => 'Globally subscribed',
+        'add'                  => [
             'title'   => 'Adicionar um novo assinante',
             'success' => 'Assinante adicionado.',
             'failure' => 'Something went wrong adding the subscriber, please try again.',
@@ -178,7 +190,7 @@ return [
         ],
         'edit' => [
             'title'   => 'Atualizar Perfil',
-            'success' => 'Perfil actualizado.',
+            'success' => 'Profile updated.',
             'failure' => 'Something went wrong updating the profile, please try again.',
         ],
         'delete' => [
@@ -210,9 +222,9 @@ return [
             'localization' => 'Localização',
         ],
         'customization' => [
-            'customization' => 'Personalização',
-            'header'        => 'HTML do Header Personalizado',
-            'footer'        => 'HTML do Footer Personalizado',
+            'customization' => 'Customization',
+            'header'        => 'Custom Header HTML',
+            'footer'        => 'Custom Footer HTML',
         ],
         'mail' => [
             'mail'  => 'Mail',
@@ -237,10 +249,10 @@ return [
             'failure' => 'Não foi possível salvar as configurações.',
         ],
         'credits' => [
-            'credits'       => 'Créditos',
-            'contributors'  => 'Contribuidores',
-            'license'       => 'Cachet é um projecto open source licenciado com base no BSD-3, disponibilizado pela <a href="https://alt-three.com/?utm_source=cachet&utm_medium=credits&utm_campaign=Cachet%20Credit%20Dashboard" target="_blank">Alt Three Services Limited</a>.',
-            'backers-title' => 'Apoios & Patrocinadores',
+            'credits'       => 'Credits',
+            'contributors'  => 'Contributors',
+            'license'       => 'Cachet is a BSD-3-licensed open source project, released by <a href="https://alt-three.com/?utm_source=cachet&utm_medium=credits&utm_campaign=Cachet%20Credit%20Dashboard" target="_blank">Alt Three Services Limited</a>.',
+            'backers-title' => 'Backers & Sponsors',
             'backers'       => 'If you\'d like to support future development, check out the <a href="https://patreon.com/jbrooksuk" target="_blank">Cachet Patreon</a> campaign.',
             'thank-you'     => 'Thank you to each and every one of the :count contributors.',
         ],
@@ -270,15 +282,15 @@ return [
     'widgets' => [
         'support'          => 'Support Cachet',
         'support_subtitle' => 'Check out our <strong><a href="https://patreon.com/jbrooksuk" target="_blank">Patreon</a></strong> page!',
-        'news'             => 'Últimas Notícias',
-        'news_subtitle'    => 'Obter uma actualização',
+        'news'             => 'Latest News',
+        'news_subtitle'    => 'Get the latest update',
     ],
 
     // Welcome modal
     'welcome' => [
         'welcome' => 'Bem vindo à sua página de estado!',
         'message' => 'Sua página de status está quase pronta! Tavez vocë queira checar essas configurações extras',
-        'close'   => 'Voltar ao Dashboard',
+        'close'   => 'I\'m good thanks!',
         'steps'   => [
             'component'  => 'Criar componentes',
             'incident'   => 'Criar incidentes',

@@ -32,9 +32,9 @@ class ScheduleController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getSchedules()
+    public function index()
     {
-        $schedule = Schedule::whereRaw('1 = 1');
+        $schedule = Schedule::query();
 
         if ($sortBy = Binput::get('sort')) {
             $direction = Binput::has('order') && Binput::get('order') == 'desc';
@@ -54,7 +54,7 @@ class ScheduleController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getSchedule(Schedule $schedule)
+    public function show(Schedule $schedule)
     {
         return $this->item($schedule);
     }
@@ -64,16 +64,17 @@ class ScheduleController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function postSchedule()
+    public function store()
     {
         try {
-            $schedule = dispatch(new CreateScheduleCommand(
+            $schedule = execute(new CreateScheduleCommand(
                 Binput::get('name'),
                 Binput::get('message', null, false, false),
                 Binput::get('status'),
                 Binput::get('scheduled_at'),
                 Binput::get('completed_at'),
-                Binput::get('components', [])
+                Binput::get('components', []),
+                Binput::get('notify', false)
             ));
         } catch (QueryException $e) {
             throw new BadRequestHttpException();
@@ -89,10 +90,10 @@ class ScheduleController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function putSchedule(Schedule $schedule)
+    public function update(Schedule $schedule)
     {
         try {
-            $schedule = dispatch(new UpdateScheduleCommand(
+            $schedule = execute(new UpdateScheduleCommand(
                 $schedule,
                 Binput::get('name'),
                 Binput::get('message'),
@@ -115,10 +116,10 @@ class ScheduleController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteSchedule(Schedule $schedule)
+    public function destroy(Schedule $schedule)
     {
         try {
-            dispatch(new DeleteScheduleCommand($schedule));
+            execute(new DeleteScheduleCommand($schedule));
         } catch (QueryException $e) {
             throw new BadRequestHttpException();
         }

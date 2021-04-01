@@ -12,7 +12,7 @@
 <div class="content-wrapper">
     <div class="row">
         <div class="col-sm-12">
-            @include('dashboard.partials.errors')
+            @include('partials.errors')
             <form name="UserForm" class="form-vertical" role="form" action="{{ cachet_route('dashboard.team.create', [], 'post') }}" method="POST">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <fieldset>
@@ -26,10 +26,9 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('forms.user.password') }}</label>
-                        <input type="password" class="form-control password-strength" name="password" value="" placeholder="{{ trans('forms.user.password') }}">
-                        <div class="strengthify-wrapper"></div>
+                        <input type="password" class="form-control" name="password" value="" placeholder="{{ trans('forms.user.password') }}">
                     </div>
-                    @if($current_user->isAdmin)
+                    @if($currentUser->isAdmin)
                     <div class="form-group">
                         <label>{{ trans('forms.user.user_level') }}</label>
                         <select name="level" class="form-control">

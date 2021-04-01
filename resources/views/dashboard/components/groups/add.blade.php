@@ -13,7 +13,7 @@
 <div class="content-wrapper">
     <div class="row">
         <div class="col-sm-12">
-            @include('dashboard.partials.errors')
+            @include('partials.errors')
             <form name="CreateComponentGroupForm" class="form-vertical" role="form" action="{{ cachet_route('dashboard.components.groups.create', [], 'post') }}" method="POST">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <fieldset>
@@ -24,16 +24,16 @@
                     <div class="form-group">
                         <label>{{ trans('forms.components.groups.collapsing') }}</label>
                         <select name="collapsed" class="form-control" required>
-                            <option value="0">{{ trans('forms.components.groups.visible') }}</option>
+                            <option value="0" selected>{{ trans('forms.components.groups.visible') }}</option>
                             <option value="1">{{ trans('forms.components.groups.collapsed') }}</option>
                             <option value="2">{{ trans('forms.components.groups.collapsed_incident') }}</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>{{ trans('forms.components.groups.visibility') }}</label>
-                        <select name="collapsed" class="form-control" required>
+                        <select name="visible" class="form-control" required>
                             <option value="0">{{ trans('forms.components.groups.visibility_authenticated') }}</option>
-                            <option value="1">{{ trans('forms.components.groups.visibility_public') }}</option>
+                            <option value="1" selected>{{ trans('forms.components.groups.visibility_public') }}</option>
                         </select>
                     </div>
                 </fieldset>

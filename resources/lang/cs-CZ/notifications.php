@@ -12,54 +12,105 @@
 return [
     'component' => [
         'status_update' => [
-            'subject' => 'Component Status Updated',
-            'title'   => 'A component\'s status was updated!',
-            'content' => ':name status changed from :old_status to :new_status.',
+            'mail' => [
+                'subject'  => 'Aktualizován stav komponenty',
+                'greeting' => 'Stav kompomenty byl aktualizován!',
+                'content'  => ':name změnil stav z :old_status na :new_status.',
+                'action'   => 'Zobrazit',
+            ],
+            'slack' => [
+                'title'   => 'Aktualizován stav komponenty',
+                'content' => ':name změnil stav z :old_status na :new_status.',
+            ],
+            'sms' => [
+                'content' => ':name změnil stav z :old_status na :new_status.',
+            ],
         ],
     ],
     'incident' => [
         'new' => [
-            'subject' => 'New Incident Reported',
-            'content' => ':name was reported',
-            'title'   => 'A new incident was reported at :app_name status page.',
-            'action'  => 'View',
+            'mail' => [
+                'subject'  => 'Nahlášena nová událost',
+                'greeting' => 'Nová událost byla nahlášena v :app_name.',
+                'content'  => 'Událost :name byla nahlášena',
+                'action'   => 'Zobrazit',
+            ],
+            'slack' => [
+                'title'   => 'Událost :name nahlášena',
+                'content' => 'Nová událost byla nahlášena v :app_name',
+            ],
+            'sms' => [
+                'content' => 'Nová událost byla nahlášena v :app_name.',
+            ],
         ],
         'update' => [
-            'subject' => 'Incident Updated',
-            'content' => ':name was updated',
-            'title'   => ':name was updated to :new_status',
-            'action'  => 'View',
+            'mail' => [
+                'subject' => 'Událost aktualizována',
+                'content' => ':name byl aktualizován',
+                'title'   => ':name změnil stav na :new_status',
+                'action'  => 'Zobrazit',
+            ],
+            'slack' => [
+                'title'   => ':name byl aktualizován',
+                'content' => ':name změnil stav na :new_status',
+            ],
+            'sms' => [
+                'content' => 'Událost :name byla aktualizována',
+            ],
         ],
     ],
     'schedule' => [
         'new' => [
-            'subject' => 'New Schedule Created',
-            'content' => ':name was scheduled for :date',
-            'title'   => 'A new scheduled maintenance was created.',
-            'action'  => 'View',
+            'mail' => [
+                'subject' => 'Nový plán vytvořen',
+                'content' => ':name bylo naplánováno na :date',
+                'title'   => 'Nová plánovaná údržba byla vytvořena.',
+                'action'  => 'Zobrazit',
+            ],
+            'slack' => [
+                'title'   => 'Nový plán vytvořen!',
+                'content' => ':name bylo naplánováno na :date',
+            ],
+            'sms' => [
+                'content' => ':name bylo naplánováno na :date',
+            ],
         ],
     ],
     'subscriber' => [
         'verify' => [
-            'subject' => 'Verify Your Subscription',
-            'content' => 'Click to verify your subscription to :app_name status page.',
-            'title'   => 'Verify your subscription to :app_name status page.',
-            'action'  => 'Verify',
+            'mail' => [
+                'subject' => 'Potvrďte váš odběr',
+                'content' => 'Klikněte pro potvrzení odběru stavové stránky :app_name.',
+                'title'   => 'Potvrďte svůj odběr stavové stránky :app_name.',
+                'action'  => 'Ověřit',
+            ],
+        ],
+        'manage' => [
+            'mail' => [
+                'subject' => 'Spravovat e-mailové odběry',
+                'content' => 'Klikněte pro potvrzení odběru stavové stránky :app_name.',
+                'title'   => 'Klikněte pro potvrzení odběru stavové stránky :app_name.',
+                'action'  => 'Spravovat odběry',
+            ],
         ],
     ],
     'system' => [
         'test' => [
-            'subject' => 'Ping from Cachet!',
-            'content' => 'This is a test notification from Cachet!',
-            'title'   => '🔔',
+            'mail' => [
+                'subject' => 'Ping z Cachet!',
+                'content' => 'Toto je testovací oznámení z Cachet!',
+                'title'   => '🔔',
+            ],
         ],
     ],
     'user' => [
         'invite' => [
-            'subject' => 'Your invitation is inside...',
-            'content' => 'You have been invited to join :app_name status page.',
-            'title'   => 'You\'re invited to join :app_name status page.',
-            'action'  => 'Accept',
+            'mail' => [
+                'subject' => 'Uvnitř najdete pozvánku...',
+                'content' => 'Byl jste pozván, abyste se připojil ke stavové stránce :app_name.',
+                'title'   => 'Jste pozváni, abyste se připojili ke stavové stránce :app_name.',
+                'action'  => 'Potvrdit',
+            ],
         ],
     ],
 ];

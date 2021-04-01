@@ -32,10 +32,16 @@ class MySqlRepository extends AbstractMetricRepository implements MetricInterfac
     public function getPointsSinceMinutes(Metric $metric, $minutes)
     {
         $queryType = $this->getQueryType($metric);
-        $points = DB::select("SELECT DATE_FORMAT({$this->getMetricPointsTable()}.`created_at`, '%H:%i') AS `key`, {$queryType} FROM {$this->getMetricsTable()} INNER JOIN {$this->getMetricPointsTable()} ON {$this->getMetricsTable()}.id = {$this->getMetricPointsTable()}.metric_id WHERE {$this->getMetricsTable()}.id = :metricId AND {$this->getMetricPointsTable()}.`created_at` >= DATE_SUB(NOW(), INTERVAL :minutes MINUTE) GROUP BY HOUR({$this->getMetricPointsTable()}.`created_at`), MINUTE({$this->getMetricPointsTable()}.`created_at`) ORDER BY {$this->getMetricPointsTable()}.`created_at`", [
-            'metricId' => $metric->id,
-            'minutes'  => $minutes,
-        ]);
+
+        $points = DB::select("SELECT DATE_FORMAT({$this->getMetricPointsTable()}.`created_at`, '%Y-%m-%d %H:%i') AS `key`, {$queryType} ".
+            "FROM {$this->getMetricsTable()} INNER JOIN {$this->getMetricPointsTable()} ON {$this->getMetricsTable()}.id = {$this->getMetricPointsTable()}.metric_id ".
+            "WHERE {$this->getMetricsTable()}.id = :metricId ".
+            "AND {$this->getMetricPointsTable()}.`created_at` >= DATE_SUB(NOW(), INTERVAL :minutes MINUTE) ".
+            "AND {$this->getMetricPointsTable()}.`created_at` <= NOW() ".
+            "GROUP BY HOUR({$this->getMetricPointsTable()}.`created_at`), MINUTE({$this->getMetricPointsTable()}.`created_at`) ORDER BY {$this->getMetricPointsTable()}.`created_at`", [
+                'metricId' => $metric->id,
+                'minutes'  => $minutes,
+            ]);
 
         return $this->mapResults($metric, $points);
     }
@@ -51,10 +57,16 @@ class MySqlRepository extends AbstractMetricRepository implements MetricInterfac
     public function getPointsSinceHour(Metric $metric, $hour)
     {
         $queryType = $this->getQueryType($metric);
-        $points = DB::select("SELECT DATE_FORMAT({$this->getMetricPointsTable()}.`created_at`, '%H:00') AS `key`, {$queryType} FROM {$this->getMetricsTable()} INNER JOIN {$this->getMetricPointsTable()} ON {$this->getMetricsTable()}.id = {$this->getMetricPointsTable()}.metric_id WHERE {$this->getMetricsTable()}.id = :metricId AND {$this->getMetricPointsTable()}.`created_at` >= DATE_SUB(NOW(), INTERVAL :hour HOUR) GROUP BY HOUR({$this->getMetricPointsTable()}.`created_at`) ORDER BY {$this->getMetricPointsTable()}.`created_at`", [
-            'metricId' => $metric->id,
-            'hour'     => $hour,
-        ]);
+        $points = DB::select("SELECT DATE_FORMAT({$this->getMetricPointsTable()}.`created_at`, '%Y-%m-%d %H:00') AS `key`, {$queryType} ".
+            "FROM {$this->getMetricsTable()} INNER JOIN {$this->getMetricPointsTable()} ON {$this->getMetricsTable()}.id = {$this->getMetricPointsTable()}.metric_id ".
+            "WHERE {$this->getMetricsTable()}.id = :metricId ".
+            "AND {$this->getMetricPointsTable()}.`created_at` >= DATE_SUB(NOW(), INTERVAL :hour HOUR) ".
+            "AND {$this->getMetricPointsTable()}.`created_at` <= NOW() ".
+            "GROUP BY HOUR({$this->getMetricPointsTable()}.`created_at`) ".
+            "ORDER BY {$this->getMetricPointsTable()}.`created_at`", [
+                'metricId' => $metric->id,
+                'hour'     => $hour,
+            ]);
 
         return $this->mapResults($metric, $points);
     }
@@ -70,10 +82,15 @@ class MySqlRepository extends AbstractMetricRepository implements MetricInterfac
     public function getPointsSinceDay(Metric $metric, $day)
     {
         $queryType = $this->getQueryType($metric);
-        $points = DB::select("SELECT DATE_FORMAT({$this->getMetricPointsTable()}.`created_at`, '%Y-%m-%d') AS `key`, {$queryType} FROM {$this->getMetricsTable()} INNER JOIN {$this->getMetricPointsTable()} ON {$this->getMetricsTable()}.id = {$this->getMetricPointsTable()}.metric_id WHERE {$this->getMetricsTable()}.id = :metricId AND {$this->getMetricPointsTable()}.`created_at` >= DATE_SUB(NOW(), INTERVAL :day DAY) GROUP BY DATE({$this->getMetricPointsTable()}.`created_at`) ORDER BY {$this->getMetricPointsTable()}.`created_at`", [
-            'metricId' => $metric->id,
-            'day'      => $day,
-        ]);
+        $points = DB::select("SELECT DATE_FORMAT({$this->getMetricPointsTable()}.`created_at`, '%Y-%m-%d') AS `key`, {$queryType} ".
+            "FROM {$this->getMetricsTable()} INNER JOIN {$this->getMetricPointsTable()} ON {$this->getMetricsTable()}.id = {$this->getMetricPointsTable()}.metric_id ".
+            "WHERE {$this->getMetricsTable()}.id = :metricId ".
+            "AND {$this->getMetricPointsTable()}.`created_at` >= DATE_SUB(NOW(), INTERVAL :day DAY) ".
+            "AND {$this->getMetricPointsTable()}.`created_at` <= NOW() ".
+            "GROUP BY DATE({$this->getMetricPointsTable()}.`created_at`) ORDER BY {$this->getMetricPointsTable()}.`created_at`", [
+                'metricId' => $metric->id,
+                'day'      => $day,
+            ]);
 
         return $this->mapResults($metric, $points);
     }

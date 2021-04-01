@@ -13,7 +13,12 @@
 <div class="content-wrapper">
     <div class="row">
         <div class="col-md-12">
-            @include('dashboard.partials.errors')
+            @if(!$notificationsEnabled)
+                <div class="alert alert-info" role="alert">
+                    {{ trans('forms.incidents.notify_disabled') }}
+                </div>
+            @endif
+            @include('partials.errors')
             <form class="form-vertical" name="IncidentForm" role="form" method="POST" autocomplete="off">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <fieldset>
@@ -44,6 +49,25 @@
                             {{ trans('cachet.incidents.status')[4] }}
                         </label>
                     </div>
+                    @if($incident->component)
+                    <div class="form-group hidden" id="component-status">
+                        <input type="hidden" name="component_id" value="{{ $incident->component->id }}">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="radio-items">
+                                    @foreach(trans('cachet.components.status') as $statusID => $status)
+                                    <div class="radio-inline">
+                                        <label>
+                                            <input type="radio" name="component_status" value="{{ $statusID }}">
+                                            {{ $status }}
+                                        </label>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                     <div class="form-group">
                         <label for="incident-visibility">{{ trans('forms.incidents.visibility') }}</label>
                         <select name="visible" id="incident-visibility" class="form-control">
@@ -54,8 +78,8 @@
                     <div class="form-group">
                         <label for="incident-stick">{{ trans('forms.incidents.stick_status') }}</label>
                         <select name="stickied" id="incident-stick" class="form-control">
-                            <option value="1" {{ $incident->stickied === 1 ? 'selected' : null }}>{{ trans('forms.incidents.stickied') }}</option>
-                            <option value="0" {{ $incident->stickied === 0 ? 'selected' : null }}>{{ trans('forms.incidents.not_stickied') }}</option>
+                            <option value="1" {{ $incident->stickied ? 'selected' : null }}>{{ trans('forms.incidents.stickied') }}</option>
+                            <option value="0" {{ !$incident->stickied ? 'selected' : null }}>{{ trans('forms.incidents.not_stickied') }}</option>
                         </select>
                     </div>
                     @if($incident->component)
@@ -85,7 +109,15 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('forms.incidents.occurred_at') }}</label> <small class="text-muted">{{ trans('forms.optional') }}</small>
-                        <input type="text" name="occurred_at" class="form-control" rel="datepicker-custom" data-date-format="YYYY-MM-DD HH:mm" value="{{ $incident->occurred_at_datetimepicker }}" placeholder="{{ trans('forms.optional') }}">
+                        <input type="text" name="occurred_at" class="form-control flatpickr-time" data-date-format="Y-m-d H:i" value="{{ $incident->occurred_at_datetimepicker }}" placeholder="{{ trans('forms.optional') }}">
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('forms.seo.title') }}</label> <small class="text-muted">{{ trans('forms.optional') }}</small>
+                        <input type="text" name="seo[title]" class="form-control"  value="{{ array_get($incident->meta, 'seo.title', '')  }}">
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('forms.seo.description') }}</label> <small class="text-muted">{{ trans('forms.optional') }}</small>
+                        <input type="text" name="seo[description]" class="form-control" value="{{ array_get($incident->meta, 'seo.description', '') }}">
                     </div>
                 </fieldset>
 

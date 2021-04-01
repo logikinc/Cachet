@@ -2,9 +2,7 @@
 
 @section('content')
 <div class="content-panel">
-    @if(isset($sub_menu))
-    @include('dashboard.partials.sub-sidebar')
-    @endif
+    @includeWhen(isset($subMenu), 'dashboard.partials.sub-sidebar')
     <div class="content-wrapper">
         <div class="header sub-header">
             <span class="uppercase">
@@ -15,7 +13,7 @@
             </a>
             <div class="clearfix"></div>
         </div>
-        @include('dashboard.partials.errors')
+        @include('partials.errors')
         <div class="row">
             <div class="col-sm-12 striped-list" data-orderable-list="/dashboard/api/components/order">
                 @forelse($components as $component)
@@ -25,7 +23,7 @@
                             @if($components->count() > 1)
                             <span class="drag-handle"><i class="ion ion-drag"></i></span>
                             @endif
-                            {{ $component->name }} <small>{{ $component->human_status }}</small>
+                            {!! $component->name !!} <small>{{ $component->human_status }}</small>
                         </h4>
                         @if($component->group)
                         <p><small>{{ trans('dashboard.components.listed_group', ['name' => $component->group->name]) }}</small></p>

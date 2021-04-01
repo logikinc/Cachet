@@ -12,6 +12,8 @@
 namespace CachetHQ\Cachet\Models;
 
 use AltThree\Validator\ValidatingTrait;
+use CachetHQ\Cachet\Models\Traits\HasMeta;
+use CachetHQ\Cachet\Models\Traits\HasTags;
 use CachetHQ\Cachet\Models\Traits\SearchableTrait;
 use CachetHQ\Cachet\Models\Traits\SortableTrait;
 use CachetHQ\Cachet\Presenters\ComponentPresenter;
@@ -22,7 +24,12 @@ use McCool\LaravelAutoPresenter\HasPresenter;
 
 class Component extends Model implements HasPresenter
 {
-    use SearchableTrait, SoftDeletes, SortableTrait, ValidatingTrait;
+    use HasTags;
+    use HasMeta;
+    use SearchableTrait;
+    use SoftDeletes;
+    use SortableTrait;
+    use ValidatingTrait;
 
     /**
      * List of attributes that have default values.
@@ -64,7 +71,6 @@ class Component extends Model implements HasPresenter
         'name',
         'description',
         'status',
-        'tags',
         'link',
         'order',
         'group_id',
@@ -135,16 +141,6 @@ class Component extends Model implements HasPresenter
     }
 
     /**
-     * Get the tags relation.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function tags()
-    {
-        return $this->belongsToMany(Tag::class);
-    }
-
-    /**
      * Finds all components by status.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -180,6 +176,23 @@ class Component extends Model implements HasPresenter
     public function scopeEnabled(Builder $query)
     {
         return $query->where('enabled', '=', true);
+    }
+
+    /**
+     * Find all components which are within visible groups.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param bool                                  $authenticated
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAuthenticated(Builder $query, $authenticated)
+    {
+        return $query->when(!$authenticated, function (Builder $query) {
+            return $query->whereDoesntHave('group', function (Builder $query) {
+                $query->where('visible', ComponentGroup::VISIBLE_AUTHENTICATED);
+            });
+        });
     }
 
     /**
@@ -221,20 +234,6 @@ class Component extends Model implements HasPresenter
         return $query->enabled()
             ->where('group_id', '>', 0)
             ->groupBy('group_id');
-    }
-
-    /**
-     * Returns all of the tags on this component.
-     *
-     * @return string
-     */
-    public function getTagsListAttribute()
-    {
-        $tags = $this->tags->map(function ($tag) {
-            return $tag->name;
-        });
-
-        return implode(', ', $tags->toArray());
     }
 
     /**

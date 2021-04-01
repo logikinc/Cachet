@@ -12,7 +12,7 @@
 namespace CachetHQ\Cachet\Bus\Handlers\Commands\Component;
 
 use CachetHQ\Cachet\Bus\Commands\Component\UpdateComponentCommand;
-use CachetHQ\Cachet\Bus\Events\Component\ComponentStatusWasUpdatedEvent;
+use CachetHQ\Cachet\Bus\Events\Component\ComponentStatusWasChangedEvent;
 use CachetHQ\Cachet\Bus\Events\Component\ComponentWasUpdatedEvent;
 use CachetHQ\Cachet\Models\Component;
 use Illuminate\Contracts\Auth\Guard;
@@ -50,9 +50,20 @@ class UpdateComponentCommandHandler
         $component = $command->component;
         $originalStatus = $component->status;
 
-        event(new ComponentStatusWasUpdatedEvent($this->auth->user(), $component, $originalStatus, $command->status));
+        if ($command->status && (int) $originalStatus !== (int) $command->status) {
+            event(new ComponentStatusWasChangedEvent($this->auth->user(), $component, $originalStatus, $command->status, $command->silent));
+        }
 
         $component->update($this->filter($command));
+
+        // Sync the tags into the component.
+        if ($command->tags) {
+            collect(preg_split('/ ?, ?/', $command->tags))->filter()->map(function ($tag) {
+                return trim($tag);
+            })->pipe(function ($tags) use ($component) {
+                $component->syncTags($tags);
+            });
+        }
 
         event(new ComponentWasUpdatedEvent($this->auth->user(), $component));
 
@@ -62,7 +73,7 @@ class UpdateComponentCommandHandler
     /**
      * Filter the command data.
      *
-     * @param \CachetHQ\Cachet\Bus\Commands\Incident\UpdateComponentCommand $command
+     * @param \CachetHQ\Cachet\Bus\Commands\Component\UpdateComponentCommand $command
      *
      * @return array
      */

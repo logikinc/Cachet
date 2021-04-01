@@ -1,5 +1,9 @@
 @extends('layout.master')
 
+@section('title', $schedule->name.' | '.$siteTitle)
+
+@section('description', trans('cachet.meta.description.schedule', ['name' => $schedule->name, 'startDate' => $schedule->scheduled_at_formatted]))
+
 @section('bodyClass', 'no-padding')
 
 @section('outer-content')
@@ -32,4 +36,8 @@
         </div>
     </div>
 </div>
+@stop
+
+@section('bottom-content')
+@include('partials.footer')
 @stop

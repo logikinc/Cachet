@@ -2,9 +2,7 @@
 
 @section('content')
 <div class="content-panel">
-    @if(isset($sub_menu))
-    @include('dashboard.partials.sub-sidebar')
-    @endif
+    @includeWhen(isset($subMenu), 'dashboard.partials.sub-sidebar')
     <div class="content-wrapper">
         <div class="header sub-header" id="application-setup">
             <span class="uppercase">

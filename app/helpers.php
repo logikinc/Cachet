@@ -9,9 +9,32 @@
  * file that was distributed with this source code.
  */
 
-use Carbon\Carbon;
+use CachetHQ\Cachet\Settings\Repository;
+use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
+use Jenssegers\Date\Date;
+
+if (!function_exists('setting')) {
+    /**
+     * Get a setting, or the default value.
+     *
+     * @param string $name
+     * @param mixed  $default
+     *
+     * @return mixed
+     */
+    function setting($name, $default = null)
+    {
+        static $settings = [];
+
+        if (isset($settings[$name])) {
+            return $settings[$name];
+        }
+
+        return $settings[$name] = app(Repository::class)->get($name, $default);
+    }
+}
 
 if (!function_exists('set_active')) {
     /**
@@ -47,7 +70,7 @@ if (!function_exists('formatted_date')) {
     {
         $dateFormat = Config::get('setting.date_format', 'jS F Y');
 
-        return Carbon::parse($date)->format($dateFormat);
+        return (new Date($date))->format($dateFormat);
     }
 }
 
@@ -91,36 +114,28 @@ if (!function_exists('color_contrast')) {
      */
     function color_contrast($hexcolor)
     {
-        $r = hexdec(substr($hexcolor, 0, 2));
-        $g = hexdec(substr($hexcolor, 2, 2));
-        $b = hexdec(substr($hexcolor, 4, 2));
+        $r = ctype_xdigit(substr($hexcolor, 0, 2));
+        $g = ctype_xdigit(substr($hexcolor, 2, 2));
+        $b = ctype_xdigit(substr($hexcolor, 4, 2));
         $yiq = (($r * 100) + ($g * 400) + ($b * 114)) / 1000;
 
         return ($yiq >= 128) ? 'black' : 'white';
     }
 }
 
-if (!function_exists('array_numeric_sort')) {
+if (!function_exists('cachet_route_generator')) {
     /**
-     * Numerically sort an array based on a specific key.
+     * Generate the route string.
      *
-     * @param array  $array
-     * @param string $key
+     * @param string $name
+     * @param string $method
+     * @param string $domain
      *
-     * @return array
+     * @return string
      */
-    function array_numeric_sort(array $array = [], $key = 'order')
+    function cachet_route_generator($name, $method = 'get', $domain = 'core')
     {
-        uasort($array, function ($a, $b) use ($key) {
-            $a = array_get($a, $key, PHP_INT_MAX);
-            $b = array_get($b, $key, PHP_INT_MAX);
-
-            $default = PHP_MAJOR_VERSION < 7 ? 1 : 0;
-
-            return $a < $b ? -1 : ($a === $b ? $default : 1);
-        });
-
-        return $array;
+        return "{$domain}::{$method}:{$name}";
     }
 }
 
@@ -137,7 +152,11 @@ if (!function_exists('cachet_route')) {
      */
     function cachet_route($name, $parameters = [], $method = 'get', $domain = 'core')
     {
-        return app('url')->route("{$domain}::{$method}:{$name}", $parameters, true);
+        return app('url')->route(
+            cachet_route_generator($name, $method, $domain),
+            $parameters,
+            true
+        );
     }
 }
 
@@ -159,5 +178,19 @@ if (!function_exists('cachet_redirect')) {
         $url = cachet_route($name, $parameters, $method, $domain);
 
         return app('redirect')->to($url, $status, $headers);
+    }
+}
+
+if (!function_exists('execute')) {
+    /**
+     * Send the given command to the dispatcher for execution.
+     *
+     * @param object $command
+     *
+     * @return void
+     */
+    function execute($command)
+    {
+        return app(Dispatcher::class)->dispatchNow($command);
     }
 }

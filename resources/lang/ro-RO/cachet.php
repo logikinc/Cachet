@@ -23,19 +23,20 @@ return [
         'group' => [
             'other' => 'Alte Componente',
         ],
+        'select_all'   => 'Select All',
+        'deselect_all' => 'Deselect All',
     ],
 
     // Incidents
     'incidents' => [
-        'none'          => 'Nici un incident raportat',
-        'past'          => 'Incidente anterioare',
-        'previous_week' => 'Săptămâna Anterioară',
-        'next_week'     => 'Săptămâna Următoare',
-        'stickied'      => 'Incidente fixate',
-        'scheduled'     => 'Întreținere programată',
-        'scheduled_at'  => ', programată: timestamp',
-        'posted'        => 'Publicat :timestamp',
-        'status'        => [
+        'none'         => 'Nici un incident raportat',
+        'past'         => 'Incidente anterioare',
+        'stickied'     => 'Stickied Incidents',
+        'scheduled'    => 'Maintenance',
+        'scheduled_at' => ', programată: timestamp',
+        'posted'       => 'Posted :timestamp by :username',
+        'posted_at'    => 'Posted at :timestamp',
+        'status'       => [
             1 => 'Sub investigație',
             2 => 'Identificat',
             3 => 'Sub observație',
@@ -54,9 +55,9 @@ return [
 
     // Service Status
     'service' => [
-        'good'  => '[0,1] Sistem operaţional|[2,Inf] Toate sistemele sunt operaţionale',
-        'bad'   => '[0,1] Sistemul se confruntă cu probleme|[2,Inf] Unele sisteme se confruntă cu probleme',
-        'major' => '[0,1] Serviciul se confruntă cu o întrerupere a funcționării majoră| [2, Inf] Unele sisteme se confruntă cu întreruperi de funcţionare majore',
+        'good'  => '[0,1]System operational|[2,*]All systems are operational',
+        'bad'   => '[0,1]The system is experiencing issues|[2,*]Some systems are experiencing issues',
+        'major' => '[0,1]The system is experiencing major issues|[2,*]Some systems are experiencing major issues',
     ],
 
     'api' => [
@@ -76,22 +77,29 @@ return [
 
     // Subscriber
     'subscriber' => [
-        'subscribe'   => 'Abonează-te pentru a primi cele mai recente actualizări',
-        'unsubscribe' => 'Unsubscribe at :link',
-        'button'      => 'Abonează-te',
-        'manage'      => [
-            'no_subscriptions' => 'Acum eşti abonat la toate actualizările.',
-            'my_subscriptions' => 'Acum eşti abonat la următoarele actualizări.',
+        'subscribe'           => 'Subscribe to status changes and incident updates',
+        'unsubscribe'         => 'Unsubscribe',
+        'button'              => 'Abonează-te',
+        'manage_subscription' => 'Manage subscription',
+        'manage'              => [
+            'notifications'       => 'Notificări',
+            'notifications_for'   => 'Manage notifications for',
+            'no_subscriptions'    => 'Acum eşti abonat la toate actualizările.',
+            'update_subscription' => 'Update Subscription',
+            'my_subscriptions'    => 'Acum eşti abonat la următoarele actualizări.',
+            'manage_at_link'      => 'Manage your subscriptions at :link',
         ],
         'email' => [
-            'subscribe'          => 'Abonează-te la actualizări prin email.',
-            'subscribed'         => 'Te-ai abonat la actualizări prin email, te rugăm să îți verifici adresa email și să confirmi abonarea.',
-            'verified'           => 'Abonarea prin email a fost confirmată. Mulțumim!',
-            'manage'             => 'Gestionează-ţi abonările',
-            'unsubscribe'        => 'Dezabonare de la actualizări prin email.',
-            'unsubscribed'       => 'Actualizările prin email au fost anulate.',
-            'failure'            => 'Ceva nu a funcționat în legătură cu abonarea.',
-            'already-subscribed' => 'Adresa :email nu poate fi folosită deoarece este deja abonată.',
+            'manage_subscription' => 'We\'ve sent you an email, please click the link to manage your subscription',
+            'subscribe'           => 'Abonează-te la actualizări prin email.',
+            'subscribed'          => 'Te-ai abonat la actualizări prin email, te rugăm să îți verifici adresa email și să confirmi abonarea.',
+            'updated-subscribe'   => 'You\'ve succesfully updated your subscriptions.',
+            'verified'            => 'Abonarea prin email a fost confirmată. Mulțumim!',
+            'manage'              => 'Gestionează-ţi abonările',
+            'unsubscribe'         => 'Dezabonare de la actualizări prin email.',
+            'unsubscribed'        => 'Actualizările prin email au fost anulate.',
+            'failure'             => 'Ceva nu a funcționat în legătură cu abonarea.',
+            'already-subscribed'  => 'Adresa :email nu poate fi folosită deoarece este deja abonată.',
         ],
     ],
 
@@ -118,11 +126,20 @@ return [
         ],
     ],
 
+    // Meta descriptions
+    'meta' => [
+        'description' => [
+            'incident'  => 'Details and updates about the :name incident that occurred on :date',
+            'schedule'  => 'Details about the scheduled maintenance period :name starting :startDate',
+            'subscribe' => 'Subscribe to :app in order to receive updates of incidents and scheduled maintenance periods',
+            'overview'  => 'Fii la curent cu cele mai recente actualizări ale serviciilor pentru :app.',
+        ],
+    ],
+
     // Other
     'home'            => 'Acasă',
-    'description'     => 'Fii la curent cu cele mai recente actualizări ale serviciilor pentru :app.',
     'powered_by'      => 'Cu sprijinul <a href="https://cachethq.io" class="links">Cachet</a>.',
-    'timezone'        => 'Orele sunt afișate după fusul orar :timezone.',
+    'timezone'        => 'Times are shown in :timezone.',
     'about_this_site' => 'Despre acest Site',
     'rss-feed'        => 'RSS',
     'atom-feed'       => 'Atom',

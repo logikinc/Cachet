@@ -32,7 +32,7 @@ class IncidentUpdatedNotification extends Notification
     /**
      * The incident update.
      *
-     * @var \CachetHQ\Cachet\Models\Incident
+     * @var \CachetHQ\Cachet\Models\IncidentUpdate
      */
     protected $update;
 
@@ -70,19 +70,25 @@ class IncidentUpdatedNotification extends Notification
     public function toMail($notifiable)
     {
         $content = trans('notifications.incident.update.mail.content', [
-            'name' => $this->update->incident->name,
-            'time' => $this->update->created_at_diff,
+            'name'    => $this->update->incident->name,
+            'time'    => $this->update->created_at_diff,
         ]);
 
         return (new MailMessage())
-                    ->subject(trans('notifications.incident.update.mail.subject'))
-                    ->greeting(trans('notifications.incident.update.mail.title', [
-                        'name'       => $this->update->incident->name,
-                        'new_status' => $this->update->human_status,
-                    ]))
-                    ->line($content)
-                    ->action(trans('notifications.incident.update.mail.action'), cachet_route('incident', [$this->update->incident]))
-                    ->line(trans('cachet.subscriber.unsubscribe', ['link' => cachet_route('subscribe.unsubscribe', $notifiable->verify_code)]));
+            ->subject(trans('notifications.incident.update.mail.subject'))
+            ->markdown('notifications.incident.update', [
+                'incident'               => $this->update->incident,
+                'update'                 => $this->update,
+                'content'                => $content,
+                'actionText'             => trans('notifications.incident.new.mail.action'),
+                'actionUrl'              => cachet_route('incident', [$this->update->incident]),
+                'incidentName'           => $this->update->incident->name,
+                'newStatus'              => $this->update->human_status,
+                'unsubscribeText'        => trans('cachet.subscriber.unsubscribe'),
+                'unsubscribeUrl'         => cachet_route('subscribe.unsubscribe', $notifiable->verify_code),
+                'manageSubscriptionText' => trans('cachet.subscriber.manage_subscription'),
+                'manageSubscriptionUrl'  => cachet_route('subscribe.manage', $notifiable->verify_code),
+            ]);
     }
 
     /**
@@ -111,7 +117,8 @@ class IncidentUpdatedNotification extends Notification
     public function toSlack($notifiable)
     {
         $content = trans('notifications.incident.update.slack.content', [
-            'name' => $this->update->incident->name,
+            'name'       => $this->update->incident->name,
+            'new_status' => $this->update->human_status,
         ]);
 
         $status = 'info';
@@ -127,16 +134,16 @@ class IncidentUpdatedNotification extends Notification
         return (new SlackMessage())
                     ->$status()
                     ->content($content)
-                    ->attachment(function ($attachment) use ($content) {
+                    ->attachment(function ($attachment) use ($notifiable) {
                         $attachment->title(trans('notifications.incident.update.slack.title', [
-                                        'name'       => $this->update->incident->name,
-                                        'new_status' => $this->update->human_status,
-                                    ]))
+                            'name'       => $this->update->incident->name,
+                            'new_status' => $this->update->human_status,
+                        ]))
                                    ->timestamp($this->update->getWrappedObject()->created_at)
                                    ->fields(array_filter([
-                                        'ID'   => "#{$this->update->id}",
-                                        'Link' => $this->update->permalink,
-                                    ]))
+                                       'ID'   => "#{$this->update->id}",
+                                       'Link' => $this->update->permalink,
+                                   ]))
                                    ->footer(trans('cachet.subscriber.unsubscribe', ['link' => cachet_route('subscribe.unsubscribe', $notifiable->verify_code)]));
                     });
     }

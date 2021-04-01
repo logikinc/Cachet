@@ -20,26 +20,30 @@
     <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('/img/apple-touch-icon-144x144.png') }}">
     <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('/img/apple-touch-icon-152x152.png') }}">
 
-    <title>{{ $page_title or $site_title }}</title>
+    <title>{{ $pageTitle ?? $siteTitle }}</title>
 
-    @if($enable_external_dependencies)
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&subset={{ $font_subset }}" rel="stylesheet" type="text/css">
+    @if($enableExternalDependencies)
+    {{-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&subset={{ $fontSubset }}" rel="stylesheet" type="text/css"> --}}
     @endif
-    <link rel="stylesheet" href="{{ elixir('dist/css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset(mix('dist/css/dashboard/dashboard.css')) }}">
     @yield('css')
 
     @include('partials.crowdin')
 
     <script type="text/javascript">
         var Global = {};
-        Global.locale = '{{ $app_locale }}';
+        Global.locale = '{{ $appLocale }}';
     </script>
-    <script src="{{ elixir('dist/js/all.js') }}"></script>
+
+    <script src="{{ asset(mix('dist/js/manifest.js')) }}"></script>
+    <script src="{{ asset(mix('dist/js/vendor.js')) }}"></script>
 </head>
 
 <body class="@yield('bodyClass')">
-    <div class="content">
+    <div class="content" id="app">
         @yield('content')
     </div>
 </body>
+@yield('js')
+<script src="{{ asset(mix('dist/js/all.js')) }}"></script>
 </html>

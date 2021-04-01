@@ -8,7 +8,7 @@
     <span class="uppercase">
         <i class="ion ion-ios-email-outline"></i> {{ trans('dashboard.subscribers.subscribers') }}
     </span>
-    @if($current_user->isAdmin && $enable_subscribers)
+    @if($currentUser->isAdmin)
     <a class="btn btn-md btn-success pull-right" href="{{ cachet_route('dashboard.subscribers.create') }}">
         {{ trans('dashboard.subscribers.add.title') }}
     </a>
@@ -18,7 +18,9 @@
 <div class="content-wrapper header-fixed">
     <div class="row">
         <div class="col-sm-12">
-            <p class="lead">{{ trans('dashboard.subscribers.description') }}</p>
+            <p class="lead">
+                {{ trans('dashboard.subscribers.description') }}
+            </p>
 
             <div class="striped-list">
                 @foreach($subscribers as $subscriber)
@@ -34,7 +36,9 @@
                         @endif
                     </div>
                     <div class="col-xs-3">
-                        @if($subscriber->subscriptions->count() > 0)
+                        @if($subscriber->global)
+                        <p>{{ trans('dashboard.subscribers.global') }}</p>
+                        @elseif($subscriber->subscriptions->isNotEmpty())
                         {!! $subscriber->subscriptions->map(function ($subscription) {
                             return sprintf('<span class="label label-primary">%s</span>', $subscription->component->name);
                         })->implode(' ') !!}
@@ -43,6 +47,7 @@
                         @endif
                     </div>
                     <div class="col-xs-3 text-right">
+                        <a href="{{ URL::signedRoute(cachet_route_generator('subscribe.manage'), ['code' => $subscriber->verify_code]) }}" target="_blank" class="btn btn-success">{{ trans('forms.edit') }}</a>
                         <a href="{{ cachet_route('dashboard.subscribers.delete', [$subscriber->id], 'delete') }}" class="btn btn-danger confirm-action" data-method='DELETE'>{{ trans('forms.delete') }}</a>
                     </div>
                 </div>

@@ -11,7 +11,6 @@
 
 namespace CachetHQ\Cachet\Bus\Exceptions\Incident;
 
-use CachetHQ\Cachet\Bus\Exceptions\ExceptionInterface;
 use Exception;
 
 /**
@@ -19,7 +18,7 @@ use Exception;
  *
  * @author James Brooks <james@alt-three.com>
  */
-class InvalidIncidentTimestampException extends Exception implements ExceptionInterface
+class InvalidIncidentTimestampException extends Exception implements IncidentExceptionInterface
 {
     //
 }

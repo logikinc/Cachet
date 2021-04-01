@@ -6,7 +6,7 @@
             </div>
             <div class="modal-body">
                 <header>
-                    {{ trans('dashboard.welcome.welcome', ['username' => $current_user->username]) }}
+                    {{ trans('dashboard.welcome.welcome', ['username' => $currentUser->username]) }}
                 </header>
 
                 <p>
@@ -64,9 +64,3 @@
         </div>
     </div>
 </div>
-
-<script>
-(function() {
-    $('#welcome-modal').modal('show');
-}());
-</script>

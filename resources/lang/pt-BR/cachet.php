@@ -14,7 +14,7 @@ return [
     'components' => [
         'last_updated' => 'Última atualização :timestamp',
         'status'       => [
-            0 => 'Unknown',
+            0 => 'Desconhecido',
             1 => 'Operacional',
             2 => 'Problemas de performance',
             3 => 'Indisponibilidade parcial',
@@ -23,19 +23,20 @@ return [
         'group' => [
             'other' => 'Outros componentes',
         ],
+        'select_all'   => 'Marcar todos',
+        'deselect_all' => 'Desmarcar todos',
     ],
 
     // Incidents
     'incidents' => [
-        'none'          => 'Nenhum incidente reportado',
-        'past'          => 'Incidentes anteriores',
-        'previous_week' => 'Última semana',
-        'next_week'     => 'Próxima semana',
-        'stickied'      => 'Incidentes fixados',
-        'scheduled'     => 'Manutenção Agendada',
-        'scheduled_at'  => ', agendada :timestamp',
-        'posted'        => 'Postado :timestamp',
-        'status'        => [
+        'none'         => 'Nenhum incidente reportado',
+        'past'         => 'Incidentes anteriores',
+        'stickied'     => 'Incidentes Fixados',
+        'scheduled'    => 'Manutenção',
+        'scheduled_at' => ', agendada :timestamp',
+        'posted'       => 'Posted :timestamp by :username',
+        'posted_at'    => 'Postado em :timestamp',
+        'status'       => [
             1 => 'Investigando',
             2 => 'Identificado',
             3 => 'Observando',
@@ -46,17 +47,17 @@ return [
     // Schedule
     'schedules' => [
         'status' => [
-            0 => 'Upcoming',
-            1 => 'In Progress',
-            2 => 'Complete',
+            0 => 'Em breve',
+            1 => 'Em Progresso',
+            2 => 'Concluído',
         ],
     ],
 
     // Service Status
     'service' => [
-        'good'  => '[0,1] Sistema operacional|[2,Inf] Todos os sistemas estão operacionais',
-        'bad'   => '[0,1] O sistema encontra-se com alguns problemas|[2,Inf] Alguns sistemas estão com problemas',
-        'major' => '[0,1] O serviço encontra-se com uma falha geral.|[2,Inf] Alguns sistemas encontram-se com falhas gerais',
+        'good'  => '[0,1] Sistema operacional | [2, *] Todos os sistemas estão operacionais',
+        'bad'   => '[0,1] O sistema apresenta falhas|[2,*] Alguns sistemas apresentam falhas',
+        'major' => '[0,1] O sistema apresenta falhas críticas|[2,Inf] Alguns sistemas apresentam falhas críticas',
     ],
 
     'api' => [
@@ -76,22 +77,29 @@ return [
 
     // Subscriber
     'subscriber' => [
-        'subscribe'   => 'Inscreva-se para obter as atualizações mais recentes',
-        'unsubscribe' => 'Unsubscribe at :link',
-        'button'      => 'Inscreva-se',
-        'manage'      => [
-            'no_subscriptions' => 'Você está atualmente inscrito a todas as atualizações.',
-            'my_subscriptions' => 'Você está atualmente inscrito para as seguintes atualizações.',
+        'subscribe'           => 'Inscreva-se para mudanças de status e atualizações de incidentes',
+        'unsubscribe'         => 'Cancelar inscrição',
+        'button'              => 'Inscreva-se',
+        'manage_subscription' => 'Gerenciar inscrição',
+        'manage'              => [
+            'notifications'       => 'Notificações',
+            'notifications_for'   => 'Gerenciar notificações',
+            'no_subscriptions'    => 'Você está atualmente inscrito a todas as atualizações.',
+            'update_subscription' => 'Atualizar inscrição',
+            'my_subscriptions'    => 'Você está atualmente inscrito para as seguintes atualizações.',
+            'manage_at_link'      => 'Gerencie suas inscrições aqui :link',
         ],
         'email' => [
-            'subscribe'          => 'Inscreva-se para atualizações via e-mail.',
-            'subscribed'         => 'Inscrição realizada com sucesso! Por favor verifique o e-mail que enviamos à você para confirmar sua inscrição.',
-            'verified'           => 'Sua inscrição foi confirmada! Obrigado!',
-            'manage'             => 'Gerencie sua assinatura',
-            'unsubscribe'        => 'Não desejo mais receber notificações via e-mail.',
-            'unsubscribed'       => 'Sua inscrição foi cancelada.',
-            'failure'            => 'Ocorreu um problema na sua inscrição.',
-            'already-subscribed' => 'Impossível inscrever :email pois já se encontra inscrito.',
+            'manage_subscription' => 'Enviamos um e-mail para você, por favor clique no link para gerenciar sua assinatura',
+            'subscribe'           => 'Inscreva-se para atualizações via e-mail.',
+            'subscribed'          => 'Inscrição realizada com sucesso! Por favor verifique o e-mail que enviamos à você para confirmar sua inscrição.',
+            'updated-subscribe'   => 'Suas assinaturas foram atualizadas com sucesso.',
+            'verified'            => 'Sua inscrição foi confirmada! Obrigado!',
+            'manage'              => 'Gerencie sua assinatura',
+            'unsubscribe'         => 'Não desejo mais receber notificações via e-mail.',
+            'unsubscribed'        => 'Sua inscrição foi cancelada.',
+            'failure'             => 'Ocorreu um problema na sua inscrição.',
+            'already-subscribed'  => 'Impossível inscrever :email pois já se encontra inscrito.',
         ],
     ],
 
@@ -118,11 +126,20 @@ return [
         ],
     ],
 
+    // Meta descriptions
+    'meta' => [
+        'description' => [
+            'incident'  => 'Detalhes e atualizações sobre o ​​incidente :name ocorrido em :date',
+            'schedule'  => 'Detalhes sobre o período de manutenção agendada :name que começa em :startDate',
+            'subscribe' => 'Inscreva-se para o :app e receba atualizações de incidentes e períodos de manutenção agendada',
+            'overview'  => 'Mantenha-se atualizado com as últimas atualizações de serviço de: app.',
+        ],
+    ],
+
     // Other
     'home'            => 'Início',
-    'description'     => 'Mantenha-se atualizado com as últimas atualizações de serviço de: app.',
     'powered_by'      => 'Desenvolvido por <a href="https://cachethq.io" class="links">Cachet</a>.',
-    'timezone'        => 'Horário é mostrado em :timezone.',
+    'timezone'        => 'Horários são exibidos em :timezone.',
     'about_this_site' => 'Sobre este Site',
     'rss-feed'        => 'RSS',
     'atom-feed'       => 'Atom',

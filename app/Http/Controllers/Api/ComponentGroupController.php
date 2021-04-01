@@ -11,7 +11,7 @@
 
 namespace CachetHQ\Cachet\Http\Controllers\Api;
 
-use CachetHQ\Cachet\Bus\Commands\ComponentGroup\AddComponentGroupCommand;
+use CachetHQ\Cachet\Bus\Commands\ComponentGroup\CreateComponentGroupCommand;
 use CachetHQ\Cachet\Bus\Commands\ComponentGroup\RemoveComponentGroupCommand;
 use CachetHQ\Cachet\Bus\Commands\ComponentGroup\UpdateComponentGroupCommand;
 use CachetHQ\Cachet\Models\ComponentGroup;
@@ -52,7 +52,7 @@ class ComponentGroupController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getGroups()
+    public function index()
     {
         $groups = ComponentGroup::query();
         if (!$this->guard->check()) {
@@ -79,7 +79,7 @@ class ComponentGroupController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getGroup(ComponentGroup $group)
+    public function show(ComponentGroup $group)
     {
         return $this->item($group);
     }
@@ -89,10 +89,10 @@ class ComponentGroupController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function postGroups()
+    public function store()
     {
         try {
-            $group = dispatch(new AddComponentGroupCommand(
+            $group = execute(new CreateComponentGroupCommand(
                 Binput::get('name'),
                 Binput::get('order', 0),
                 Binput::get('collapsed', 0),
@@ -112,10 +112,10 @@ class ComponentGroupController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function putGroup(ComponentGroup $group)
+    public function update(ComponentGroup $group)
     {
         try {
-            $group = dispatch(new UpdateComponentGroupCommand(
+            $group = execute(new UpdateComponentGroupCommand(
                 $group,
                 Binput::get('name'),
                 Binput::get('order'),
@@ -136,9 +136,9 @@ class ComponentGroupController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteGroup(ComponentGroup $group)
+    public function destroy(ComponentGroup $group)
     {
-        dispatch(new RemoveComponentGroupCommand($group));
+        execute(new RemoveComponentGroupCommand($group));
 
         return $this->noContent();
     }

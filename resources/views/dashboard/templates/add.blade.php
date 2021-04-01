@@ -9,13 +9,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/mode/twig/twig.min.js"></script>
 
 <script>
-(function() {
-    var editor = CodeMirror.fromTextArea(document.getElementById('cm-editor'), {
-        lineNumbers: true,
-        mode: 'twig',
-        lineWrapping: true
-    });
-}());
+//Initializes the editor only once the DOM is loaded.
+window.addEventListener("DOMContentLoaded", function(e) {
+     var editor = CodeMirror.fromTextArea(document.getElementById('cm-editor'), {
+         lineNumbers: true,
+         mode: 'twig',
+         lineWrapping: true
+     });
+});
 </script>
 @stop
 
@@ -32,7 +33,7 @@
 <div class="content-wrapper">
     <div class="row">
         <div class="col-md-12">
-            @include('dashboard.partials.errors')
+            @include('partials.errors')
             <form class="form-vertical" name="IncidentForm" role="form" method="POST" autocomplete="off">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <fieldset>

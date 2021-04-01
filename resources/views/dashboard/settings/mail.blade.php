@@ -2,9 +2,7 @@
 
 @section('content')
 <div class="content-panel">
-    @if(isset($sub_menu))
-    @include('dashboard.partials.sub-sidebar')
-    @endif
+    @includeWhen(isset($subMenu), 'dashboard.partials.sub-sidebar')
     <div class="content-wrapper">
         <div class="header sub-header" id="application-setup">
             <span class="uppercase">
@@ -15,13 +13,13 @@
             <div class="col-sm-12">
                 <form id="settings-form" name="SettingsForm" class="form-vertical" role="form" action="{{ cachet_route('dashboard.settings.mail', [], 'post') }}" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    @include('dashboard.partials.errors')
+                    @include('partials.errors')
                     <fieldset>
                         <div class="form-group">
                             <label>{{ trans('forms.setup.mail_driver') }}</label>
                             <select name="config[mail_driver]" class="form-control" required>
                                 <option disabled>{{ trans('forms.setup.mail_driver') }}</option>
-                                @foreach($mail_drivers as $driver => $driverName)
+                                @foreach($mailDrivers as $driver => $driverName)
                                 <option value="{{ $driver }}" {{ Binput::old('config.mail_driver', $config['driver']) == $driver ? "selected" : null }}>{{ $driverName }}</option>
                                 @endforeach
                             </select>
@@ -40,7 +38,7 @@
                         </div>
                         <div class="form-group">
                             <label>{{ trans('forms.setup.mail_password') }}</label>
-                            <input type="password" class="form-control" name="config[mail_password]" value="{{ Binput::old('config.mail_password', $config['password']) }}" autocomplete="off" placeholder="{{ trans('forms.setup.mail_password') }}">
+                            <input type="password" class="form-control" name="config[mail_password]" value="{{ Binput::old('config.mail_password') }}" autocomplete="off" placeholder="{{ trans('forms.setup.mail_password') }}">
                         </div>
                     </fieldset>
 

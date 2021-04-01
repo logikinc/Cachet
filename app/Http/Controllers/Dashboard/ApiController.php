@@ -36,7 +36,7 @@ class ApiController extends AbstractApiController
     public function postUpdateComponent(Component $component)
     {
         try {
-            dispatch(new UpdateComponentCommand(
+            execute(new UpdateComponentCommand(
                 $component,
                 $component->name,
                 $component->description,
@@ -45,7 +45,8 @@ class ApiController extends AbstractApiController
                 $component->order,
                 $component->group_id,
                 $component->enabled,
-                $component->meta
+                $component->meta,
+                false
             ));
         } catch (QueryException $e) {
             throw new BadRequestHttpException();
@@ -67,7 +68,7 @@ class ApiController extends AbstractApiController
             try {
                 $component = Component::find($componentId);
 
-                dispatch(new UpdateComponentCommand(
+                execute(new UpdateComponentCommand(
                     $component,
                     $component->name,
                     $component->description,
@@ -76,7 +77,8 @@ class ApiController extends AbstractApiController
                     $order + 1,
                     $component->group_id,
                     $component->enabled,
-                    $component->meta
+                    $component->meta,
+                    true
                 ));
             } catch (QueryException $e) {
                 throw new BadRequestHttpException();
@@ -98,7 +100,7 @@ class ApiController extends AbstractApiController
         foreach ($groupData as $order => $groupId) {
             $group = ComponentGroup::find($groupId);
 
-            dispatch(new UpdateComponentGroupCommand(
+            execute(new UpdateComponentGroupCommand(
                 $group,
                 $group->name,
                 $order + 1,

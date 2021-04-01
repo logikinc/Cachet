@@ -16,6 +16,7 @@ use CachetHQ\Cachet\Models\User;
 use CachetHQ\Cachet\Settings\Repository;
 use GrahamCampbell\Binput\Facades\Binput;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
@@ -52,12 +53,12 @@ class SetupController extends Controller
      * @var string[]
      */
     protected $mailDrivers = [
-        'smtp'     => 'SMTP',
-        'mail'     => 'Mail',
-        'sendmail' => 'Sendmail',
-        'mailgun'  => 'Mailgun',
-        'mandrill' => 'Mandrill',
-        // 'ses'       => 'Amazon SES', this will be available only if aws/aws-sdk-php is installed
+        'smtp'      => 'SMTP',
+        'mail'      => 'Mail',
+        'sendmail'  => 'Sendmail',
+        'mailgun'   => 'Mailgun',
+        'mandrill'  => 'Mandrill',
+        'ses'       => 'Amazon SES',
         'sparkpost' => 'SparkPost',
         'log'       => 'Log (Testing)',
     ];
@@ -133,17 +134,20 @@ class SetupController extends Controller
      */
     public function getIndex()
     {
-        $supportedLanguages = Request::getLanguages();
+        $requestedLanguages = Request::getLanguages();
         $userLanguage = Config::get('app.locale');
+        $langs = Config::get('langs');
 
-        foreach ($supportedLanguages as $language) {
+        foreach ($requestedLanguages as $language) {
             $language = str_replace('_', '-', $language);
 
-            if (isset($this->langs[$language])) {
+            if (isset($langs[$language])) {
                 $userLanguage = $language;
                 break;
             }
         }
+
+        app('translator')->setLocale($userLanguage);
 
         // Since .env may already be configured, we should show that data!
         $cacheConfig = [
@@ -194,8 +198,12 @@ class SetupController extends Controller
             return $input->env['mail_driver'] === 'smtp';
         });
 
-        $v->sometimes(['env.mail_address', 'env.mail_username', 'env.mail_password'], 'required', function ($input) {
-            return $input->env['mail_driver'] !== 'log';
+        $v->sometimes(['env.mail_address', 'env.mail_password'], 'required', function ($input) {
+            return !in_array($input->env['mail_driver'], ['log', 'smtp']);
+        });
+
+        $v->sometimes(['env.mail_username'], 'required', function ($input) {
+            return !in_array($input->env['mail_driver'], ['sendmail', 'log']);
         });
 
         if ($v->passes()) {
@@ -236,7 +244,7 @@ class SetupController extends Controller
 
         if ($v->passes()) {
             // Pull the user details out.
-            $userDetails = array_pull($postData, 'user');
+            $userDetails = Arr::pull($postData, 'user');
 
             $user = User::create([
                 'username' => $userDetails['username'],
@@ -249,16 +257,16 @@ class SetupController extends Controller
 
             $setting = app(Repository::class);
 
-            $settings = array_pull($postData, 'settings');
+            $settings = Arr::pull($postData, 'settings');
 
             foreach ($settings as $settingName => $settingValue) {
                 $setting->set($settingName, $settingValue);
             }
 
-            $envData = array_pull($postData, 'env');
+            $envData = Arr::pull($postData, 'env');
 
             // Write the env to the .env file.
-            dispatch(new UpdateConfigCommand($envData));
+            execute(new UpdateConfigCommand($envData));
 
             if (Request::ajax()) {
                 return Response::json(['status' => 1]);

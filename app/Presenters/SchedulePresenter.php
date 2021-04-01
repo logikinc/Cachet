@@ -45,8 +45,6 @@ class SchedulePresenter extends BasePresenter implements Arrayable
     public function __construct(DateFactory $dates, Schedule $resource)
     {
         $this->dates = $dates;
-
-        parent::__construct($resource);
     }
 
     /**
@@ -206,11 +204,13 @@ class SchedulePresenter extends BasePresenter implements Arrayable
     /**
      * Formats the completed_at time ready to be used by bootstrap-datetimepicker.
      *
-     * @return string
+     * @return string|void
      */
     public function completed_at_datetimepicker()
     {
-        return $this->dates->make($this->wrappedObject->completed_at)->format('Y-m-d H:i');
+        if ($this->wrappedObject->completed_at) {
+            return $this->dates->make($this->wrappedObject->completed_at)->format('Y-m-d H:i');
+        }
     }
 
     /**

@@ -12,17 +12,17 @@
 namespace CachetHQ\Cachet\Http\Middleware;
 
 use CachetHQ\Cachet\Settings\Repository as SettingsRepository;
-use Carbon\Carbon;
 use Closure;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Http\Request;
+use Jenssegers\Date\Date;
 
 /**
  * This is the localize middleware class.
  *
  * @author James Brooks <james@alt-three.com>
  * @author Joseph Cohen <joe@alt-three.com>
- * @author Graham Campbell <james@alt-three.com>
+ * @author Graham Campbell <graham@alt-three.com>
  */
 class Localize
 {
@@ -82,7 +82,7 @@ class Localize
         }
 
         app('translator')->setLocale($userLanguage);
-        Carbon::setLocale($userLanguage);
+        Date::setLocale($userLanguage);
 
         return $next($request);
     }

@@ -12,10 +12,12 @@
 namespace CachetHQ\Cachet\Models;
 
 use AltThree\Validator\ValidatingTrait;
+use CachetHQ\Cachet\Models\Traits\HasMeta;
 use CachetHQ\Cachet\Presenters\SubscriberPresenter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use McCool\LaravelAutoPresenter\HasPresenter;
 
 /**
@@ -27,7 +29,9 @@ use McCool\LaravelAutoPresenter\HasPresenter;
  */
 class Subscriber extends Model implements HasPresenter
 {
-    use Notifiable, ValidatingTrait;
+    use HasMeta;
+    use Notifiable;
+    use ValidatingTrait;
 
     /**
      * The attributes that should be casted to native types.
@@ -156,7 +160,7 @@ class Subscriber extends Model implements HasPresenter
      */
     public static function generateVerifyCode()
     {
-        return str_random(42);
+        return Str::random(42);
     }
 
     /**

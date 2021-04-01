@@ -12,34 +12,35 @@
 return [
     // Components
     'components' => [
-        'last_updated' => 'Viimeksi päivitetty :timestamp',
+        'last_updated' => 'Last updated :timestamp',
         'status'       => [
             0 => 'Unknown',
-            1 => 'Toiminnassa',
-            2 => 'Suorituskykyyn liittyviä ongelmia',
-            3 => 'Osittainen katkos',
-            4 => 'Merkittävä katkos',
+            1 => 'Operational',
+            2 => 'Performance Issues',
+            3 => 'Partial Outage',
+            4 => 'Major Outage',
         ],
         'group' => [
-            'other' => 'Muut komponentit',
+            'other' => 'Other Components',
         ],
+        'select_all'   => 'Select All',
+        'deselect_all' => 'Deselect All',
     ],
 
     // Incidents
     'incidents' => [
-        'none'          => 'Ei raportoitavia tapauksia',
-        'past'          => 'Aikaisemmat tapahtumat',
-        'previous_week' => 'Edellinen viikko',
-        'next_week'     => 'Seuraava viikko',
-        'stickied'      => 'Stickied Incidents',
-        'scheduled'     => 'Ajastettu tapahtuma',
-        'scheduled_at'  => ', ajoitettu :timestamp',
-        'posted'        => 'Posted :timestamp',
-        'status'        => [
-            1 => 'Tutkitaan',
-            2 => 'Tunnistettu',
-            3 => 'Valvotaan',
-            4 => 'Korjattu',
+        'none'         => 'No incidents reported',
+        'past'         => 'Past Incidents',
+        'stickied'     => 'Stickied Incidents',
+        'scheduled'    => 'Maintenance',
+        'scheduled_at' => ', scheduled :timestamp',
+        'posted'       => 'Posted :timestamp by :username',
+        'posted_at'    => 'Posted at :timestamp',
+        'status'       => [
+            1 => 'Investigating',
+            2 => 'Identified',
+            3 => 'Watching',
+            4 => 'Fixed',
         ],
     ],
 
@@ -54,78 +55,94 @@ return [
 
     // Service Status
     'service' => [
-        'good'  => '[0,1] järjestelmät ovat toiminnassa| [2, Inf] Kaikki järjestelmät ovat toiminnassa',
-        'bad'   => '[0,1] järjestelmässä on tällä hetkellä ongelmia| [2, Inf] Joissakin järjestelmissä on ongelmia',
-        'major' => '[0,1] Palvelussa on merkittävä katkos| [2, Inf] Joissakin järjestelmissä on merkittävä katkoksia',
+        'good'  => '[0,1]System operational|[2,*]All systems are operational',
+        'bad'   => '[0,1]The system is experiencing issues|[2,*]Some systems are experiencing issues',
+        'major' => '[0,1]The system is experiencing major issues|[2,*]Some systems are experiencing major issues',
     ],
 
     'api' => [
-        'regenerate' => 'Luo API-avain',
-        'revoke'     => 'Peruuta API-avain',
+        'regenerate' => 'Regenerate API Key',
+        'revoke'     => 'Revoke API Key',
     ],
 
     // Metrics
     'metrics' => [
         'filter' => [
-            'last_hour' => 'Viimeisen tunnin',
-            'hourly'    => 'Viimeisen 12 tunnin',
-            'weekly'    => 'Viikko',
-            'monthly'   => 'Kuukausi',
+            'last_hour' => 'Last Hour',
+            'hourly'    => 'Last 12 Hours',
+            'weekly'    => 'Week',
+            'monthly'   => 'Month',
         ],
     ],
 
     // Subscriber
     'subscriber' => [
-        'subscribe'   => 'Tilaa uusimmat päivitykset',
-        'unsubscribe' => 'Unsubscribe at :link',
-        'button'      => 'Tilaa',
-        'manage'      => [
-            'no_subscriptions' => 'Olet tällä hetkellä tilannut kaikki ilmoitukset.',
-            'my_subscriptions' => 'Olet tällä hetkellä tilannut seuraavat ilmoitukset.',
+        'subscribe'           => 'Subscribe to status changes and incident updates',
+        'unsubscribe'         => 'Unsubscribe',
+        'button'              => 'Subscribe',
+        'manage_subscription' => 'Manage subscription',
+        'manage'              => [
+            'notifications'       => 'Notifications',
+            'notifications_for'   => 'Manage notifications for',
+            'no_subscriptions'    => 'You\'re currently subscribed to all updates.',
+            'update_subscription' => 'Update Subscription',
+            'my_subscriptions'    => 'You\'re currently subscribed to the following updates.',
+            'manage_at_link'      => 'Manage your subscriptions at :link',
         ],
         'email' => [
-            'subscribe'          => 'Tilaa sähköpostiin päivitykset.',
-            'subscribed'         => 'Olet tilannut sähköposti-ilmoitukset, tarkista sähköpostisi vahvistaaksesi tilauksen.',
-            'verified'           => 'Sähköpostitilauksesi on vahvistettu. Kiitos!',
-            'manage'             => 'Hallinnoi tilaustasi',
-            'unsubscribe'        => 'Lopeta sähköpostitilaus.',
-            'unsubscribed'       => 'Sähköpostitilauksesi on peruutettu.',
-            'failure'            => 'Jokin meni vikaan sähköpostitilauksen käsittelyssä.',
-            'already-subscribed' => 'Ei voida tilata ilmoituksia sähköpostilla :email koska on jo tilattu.',
+            'manage_subscription' => 'We\'ve sent you an email, please click the link to manage your subscription',
+            'subscribe'           => 'Subscribe to email updates.',
+            'subscribed'          => 'You\'ve been subscribed to email notifications, please check your email to confirm your subscription.',
+            'updated-subscribe'   => 'You\'ve succesfully updated your subscriptions.',
+            'verified'            => 'Your email subscription has been confirmed. Thank you!',
+            'manage'              => 'Manage your subscription',
+            'unsubscribe'         => 'Unsubscribe from email updates.',
+            'unsubscribed'        => 'Your email subscription has been cancelled.',
+            'failure'             => 'Something went wrong with the subscription.',
+            'already-subscribed'  => 'Cannot subscribe :email because they\'re already subscribed.',
         ],
     ],
 
     'signup' => [
-        'title'    => 'Rekisteröidy',
-        'username' => 'Käyttäjätunnus',
-        'email'    => 'Sähköposti',
-        'password' => 'Salasana',
-        'success'  => 'Tilisi on luotu.',
-        'failure'  => 'Jokin meni vikaan sähköpostitilauksen käsittelyssä.',
+        'title'    => 'Sign Up',
+        'username' => 'Username',
+        'email'    => 'Email',
+        'password' => 'Password',
+        'success'  => 'Your account has been created.',
+        'failure'  => 'Something went wrong with the signup.',
     ],
 
     'system' => [
-        'update' => 'Cachetistä on saatavilla uudempi versio. Katso miten päivitetään uudempaan versioon <a href="https://docs.cachethq.io/docs/updating-cachet">täältä</a>!',
+        'update' => 'There is a newer version of Cachet available. You can learn how to update <a href="https://docs.cachethq.io/docs/updating-cachet">here</a>!',
     ],
 
     // Modal
     'modal' => [
-        'close'     => 'Sulje',
+        'close'     => 'Close',
         'subscribe' => [
-            'title'  => 'Tilaa sähköpostiin ilmoituksia komponenttien tilasta',
-            'body'   => 'Kirjoita sähköpostiosoitteesi tilaaksesi päivitykset tästä komponetista. Jos olet jo tilaaja, saat jo sähköposti ilmoituksia tästä komponetista.',
-            'button' => 'Tilaa',
+            'title'  => 'Subscribe to component updates',
+            'body'   => 'Enter your email address to subscribe to updates for this component. If you\'re already subscribed, you\'ll already receive emails for this component.',
+            'button' => 'Subscribe',
+        ],
+    ],
+
+    // Meta descriptions
+    'meta' => [
+        'description' => [
+            'incident'  => 'Details and updates about the :name incident that occurred on :date',
+            'schedule'  => 'Details about the scheduled maintenance period :name starting :startDate',
+            'subscribe' => 'Subscribe to :app in order to receive updates of incidents and scheduled maintenance periods',
+            'overview'  => 'Stay up to date with the latest service updates from :app.',
         ],
     ],
 
     // Other
-    'home'            => 'Etusivu',
-    'description'     => 'Pysy ajan tasalla tilaamalla uusimmat päivitykset :app.',
+    'home'            => 'Home',
     'powered_by'      => 'Powered by <a href="https://cachethq.io" class="links"> Cachet</a>.',
-    'timezone'        => 'Aika näytetään :timezone.',
-    'about_this_site' => 'Tietoa sivustosta',
+    'timezone'        => 'Times are shown in :timezone.',
+    'about_this_site' => 'About This Site',
     'rss-feed'        => 'RSS',
     'atom-feed'       => 'Atom',
-    'feed'            => 'Statussyöte',
+    'feed'            => 'Status Feed',
 
 ];

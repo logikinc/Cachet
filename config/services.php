@@ -23,7 +23,7 @@ return [
     |
     */
 
-   'github' => [
+    'github' => [
         'token' => env('GITHUB_TOKEN'),
     ],
 
@@ -45,7 +45,7 @@ return [
     'ses' => [
         'key'    => env('MAIL_USERNAME'),
         'secret' => env('MAIL_PASSWORD'),
-        'region' => 'us-east-1',
+        'region' => env('SES_REGION', 'us-east-1'),
     ],
 
     'sparkpost' => [

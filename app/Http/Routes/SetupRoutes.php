@@ -45,21 +45,6 @@ class SetupRoutes
                 'as'   => 'get:setup',
                 'uses' => 'SetupController@getIndex',
             ]);
-
-            $router->post('step1', [
-                'as'   => 'post:setup.step1',
-                'uses' => 'SetupController@postStep1',
-            ]);
-
-            $router->post('step2', [
-                'as'   => 'post:setup.step2',
-                'uses' => 'SetupController@postStep2',
-            ]);
-
-            $router->post('step3', [
-                'as'   => 'post:setup.step3',
-                'uses' => 'SetupController@postStep3',
-            ]);
         });
     }
 }

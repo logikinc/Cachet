@@ -15,10 +15,7 @@ use CachetHQ\Cachet\Bus\Events\System\SystemWasInstalledEvent;
 use CachetHQ\Cachet\Bus\Events\System\SystemWasResetEvent;
 use CachetHQ\Cachet\Bus\Events\System\SystemWasUpdatedEvent;
 use CachetHQ\Cachet\Settings\Cache;
-use Carbon\Carbon;
-use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
 
 /**
@@ -37,24 +34,15 @@ class CommandSubscriber
     protected $cache;
 
     /**
-     * The config repository instance.
-     *
-     * @var \Illuminate\Contracts\Config\Repository
-     */
-    protected $config;
-
-    /**
      * Create a new command subscriber instance.
      *
-     * @param \CachetHQ\Cachet\Settings\Cache         $cache
-     * @param \Illuminate\Contracts\Config\Repository $config
+     * @param \CachetHQ\Cachet\Settings\Cache $cache
      *
      * @return void
      */
-    public function __construct(Cache $cache, Repository $config)
+    public function __construct(Cache $cache)
     {
         $this->cache = $cache;
-        $this->config = $config;
     }
 
     /**
@@ -69,6 +57,15 @@ class CommandSubscriber
         $events->listen('command.installing', __CLASS__.'@fireInstallingCommand', 5);
         $events->listen('command.updating', __CLASS__.'@fireUpdatingCommand', 5);
         $events->listen('command.resetting', __CLASS__.'@fireResettingCommand', 5);
+        $events->listen('command.generatekey', __CLASS__.'@onGenerateKey');
+        $events->listen('command.cacheconfig', __CLASS__.'@onCacheConfig');
+        $events->listen('command.cacheroutes', __CLASS__.'@onCacheRoutes');
+        $events->listen('command.publishvendors', __CLASS__.'@onPublishVendors');
+        $events->listen('command.resetmigrations', __CLASS__.'@onResetMigrations');
+        $events->listen('command.runmigrations', __CLASS__.'@onRunMigrations');
+        $events->listen('command.runseeding', __CLASS__.'@onRunSeeding');
+        $events->listen('command.linkstorage', __CLASS__.'@onLinkStorage');
+        $events->listen('command.updatecache', __CLASS__.'@onUpdateCache');
     }
 
     /**
@@ -120,7 +117,7 @@ class CommandSubscriber
     }
 
     /**
-     * Handle the main bulk of the command, clear the settings and backup the database.
+     * Handle the main bulk of the command, clear the settings.
      *
      * @param \Illuminate\Console\Command $command
      *
@@ -133,29 +130,117 @@ class CommandSubscriber
         $this->cache->clear();
 
         $command->line('Settings cache cleared!');
+    }
 
-        // SQLite does not backup.
-        if ($this->config->get('database.default') === 'sqlite') {
-            $command->line('Backup skipped: SQLite is not supported.');
+    /**
+     * Handle a command.generatekey event.
+     *
+     * @param \Illuminate\Console\Command $command
+     *
+     * @return void
+     */
+    public function onGenerateKey(Command $command)
+    {
+        $command->call('key:generate');
+    }
 
-            return;
+    /**
+     * Handle a command.cacheconfig event.
+     *
+     * @param \Illuminate\Console\Command $command
+     *
+     * @return void
+     */
+    public function onCacheConfig(Command $command)
+    {
+        $command->call('config:cache');
+    }
+
+    /**
+     * Handle a command.cacheroutes event.
+     *
+     * @param \Illuminate\Console\Command $command
+     *
+     * @return void
+     */
+    public function onCacheRoutes(Command $command)
+    {
+        $command->call('route:cache');
+    }
+
+    /**
+     * Handle a command.publishvendors event.
+     *
+     * @param \Illuminate\Console\Command $command
+     *
+     * @return void
+     */
+    public function onPublishVendors(Command $command)
+    {
+        $command->call('vendor:publish', ['--all' => true]);
+    }
+
+    /**
+     * Handle a command.resetmigrations event.
+     *
+     * @param \Illuminate\Console\Command $command
+     *
+     * @return void
+     */
+    public function onResetMigrations(Command $command)
+    {
+        $command->call('migrate:reset', ['--force' => true]);
+    }
+
+    /**
+     * Handle a command.runmigrations event.
+     *
+     * @param \Illuminate\Console\Command $command
+     *
+     * @return void
+     */
+    public function onRunMigrations(Command $command)
+    {
+        $command->call('migrate', ['--force' => true]);
+    }
+
+    /**
+     * Handle a command.runseeding event.
+     *
+     * @param \Illuminate\Console\Command $command
+     *
+     * @return void
+     */
+    public function onRunSeeding(Command $command)
+    {
+        $command->call('db:seed', ['--force' => true]);
+    }
+
+    /**
+     * Handle a command.linkstorage event.
+     *
+     * @param \Illuminate\Console\Command $command
+     *
+     * @return void
+     */
+    public function onLinkStorage(Command $command)
+    {
+        if ($command->getApplication()->has('storage:link')) {
+            $command->call('storage:link');
         }
+    }
 
-        $command->line('Backing up database...');
-
-        try {
-            $command->call('db:backup', [
-                '--compression'     => 'gzip',
-                '--database'        => $this->config->get('database.default'),
-                '--destination'     => 'local',
-                '--destinationPath' => Carbon::now()->format('Y-m-d H.i.s'),
-                '--no-interaction'  => true,
-            ]);
-        } catch (Exception $e) {
-            $command->error($e->getMessage());
-            $command->line('Backup skipped!');
-        }
-
-        $command->line('Backup completed!');
+    /**
+     * Handle a command.updatecache event.
+     *
+     * @param \Illuminate\Console\Command $command
+     *
+     * @return void
+     */
+    public function onUpdateCache(Command $command)
+    {
+        $command->line('Clearing cache...');
+        $command->call('cache:clear');
+        $command->info('Cache cleared!');
     }
 }

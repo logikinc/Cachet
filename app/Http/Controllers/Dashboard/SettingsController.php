@@ -19,6 +19,7 @@ use CachetHQ\Cachet\Settings\Repository;
 use Exception;
 use GrahamCampbell\Binput\Facades\Binput;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Lang;
@@ -27,6 +28,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
+use Monolog\Handler\SyslogHandler;
 
 class SettingsController extends Controller
 {
@@ -114,8 +116,8 @@ class SettingsController extends Controller
         ];
 
         View::share([
-            'sub_title' => trans('dashboard.settings.settings'),
-            'sub_menu'  => $this->subMenu,
+            'subTitle' => trans('dashboard.settings.settings'),
+            'subMenu'  => $this->subMenu,
         ]);
     }
 
@@ -268,9 +270,17 @@ class SettingsController extends Controller
     {
         $this->subMenu['log']['active'] = true;
 
-        $log = Log::getMonolog();
+        $log = Log::getLogger();
 
-        $logContents = file_get_contents($log->getHandlers()[0]->getUrl());
+        $logContents = '';
+
+        collect($log->getHandlers())->reject(function ($handler) {
+            return $handler instanceof SyslogHandler;
+        })->each(function ($handler) use (&$logContents, $log) {
+            if (file_exists($path = $log->getHandlers()[0]->getUrl())) {
+                $logContents = file_get_contents($path);
+            }
+        });
 
         return View::make('dashboard.settings.log')->withLog($logContents)->withSubMenu($this->subMenu);
     }
@@ -309,7 +319,7 @@ class SettingsController extends Controller
     {
         $config = Binput::get('config');
 
-        dispatch(new UpdateConfigCommand($config));
+        execute(new UpdateConfigCommand($config));
 
         return cachet_redirect('dashboard.settings.mail')
             ->withInput(Binput::all())
@@ -347,6 +357,14 @@ class SettingsController extends Controller
             }
         }
 
+        if (isset($parameters['stylesheet'])) {
+            if ($stylesheet = Binput::get('stylesheet', null, false, false)) {
+                $setting->set('stylesheet', $stylesheet);
+            } else {
+                $setting->delete('stylesheet');
+            }
+        }
+
         if (Binput::hasFile('app_banner')) {
             $this->handleUpdateBanner($setting);
         }
@@ -357,6 +375,7 @@ class SettingsController extends Controller
             'remove_banner',
             'header',
             'footer',
+            'stylesheet',
         ];
 
         try {
@@ -375,6 +394,10 @@ class SettingsController extends Controller
             Lang::setLocale(Binput::get('app_locale'));
         }
 
+        if (Binput::has('always_authenticate')) {
+            Artisan::call('route:clear');
+        }
+
         return Redirect::back()->withSuccess(trans('dashboard.settings.edit.success'));
     }
 
@@ -388,6 +411,7 @@ class SettingsController extends Controller
     protected function handleUpdateBanner(Repository $setting)
     {
         $file = Binput::file('app_banner');
+        $redirectUrl = $this->subMenu['theme']['url'];
 
         // Image Validation.
         // Image size in bytes.

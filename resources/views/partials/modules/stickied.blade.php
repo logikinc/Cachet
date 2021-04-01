@@ -1,8 +1,8 @@
-@if($stickied_incidents->isNotEmpty())
+@if($stickiedIncidents->isNotEmpty())
 <div class="section-stickied">
     <h1>{{ trans('cachet.incidents.stickied') }}</h1>
-    @foreach($stickied_incidents as $date => $incidents)
-    @include('partials.incidents', [compact($date), compact($incidents)])
+    @foreach($stickiedIncidents as $date => $incidents)
+    @include('partials.incidents')
     @endforeach
 </div>
 @endif

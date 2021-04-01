@@ -12,54 +12,105 @@
 return [
     'component' => [
         'status_update' => [
-            'subject' => 'Component Status Updated',
-            'title'   => 'A component\'s status was updated!',
-            'content' => ':name status changed from :old_status to :new_status.',
+            'mail' => [
+                'subject'  => '组件状态已更新',
+                'greeting' => '一个组件的状态已被更新！',
+                'content'  => ':name 状态已由 :old_status 变为 :new_status。',
+                'action'   => '查看',
+            ],
+            'slack' => [
+                'title'   => '组件状态已更新',
+                'content' => ':name 状态已由 :old_status 变为 :new_status。',
+            ],
+            'sms' => [
+                'content' => ':name 状态已由 :old_status 变为 :new_status。',
+            ],
         ],
     ],
     'incident' => [
         'new' => [
-            'subject' => 'New Incident Reported',
-            'content' => ':name was reported',
-            'title'   => 'A new incident was reported at :app_name status page.',
-            'action'  => 'View',
+            'mail' => [
+                'subject'  => '有新故障报告',
+                'greeting' => '在 :app_name 处有新故障报告。',
+                'content'  => '故障 :name 已被报告',
+                'action'   => '查看',
+            ],
+            'slack' => [
+                'title'   => '故障 :name 已报告',
+                'content' => '在 :app_name 处有新故障报告。',
+            ],
+            'sms' => [
+                'content' => '在 :app_name 处有新故障报告。',
+            ],
         ],
         'update' => [
-            'subject' => 'Incident Updated',
-            'content' => ':name was updated',
-            'title'   => ':name was updated to :new_status',
-            'action'  => 'View',
+            'mail' => [
+                'subject' => '有故障更新',
+                'content' => ':name 被更新',
+                'title'   => ':name 被更新至 :new_status',
+                'action'  => '查看',
+            ],
+            'slack' => [
+                'title'   => ':name 已更新',
+                'content' => ':name 被更新至 :new_status',
+            ],
+            'sms' => [
+                'content' => '故障 :name 已被更新',
+            ],
         ],
     ],
     'schedule' => [
         'new' => [
-            'subject' => 'New Schedule Created',
-            'content' => ':name was scheduled for :date',
-            'title'   => 'A new scheduled maintenance was created.',
-            'action'  => 'View',
+            'mail' => [
+                'subject' => '新的维护计划已创建',
+                'content' => ':name 已计划于 :date 进行',
+                'title'   => '新的计划维护已创建。',
+                'action'  => '查看',
+            ],
+            'slack' => [
+                'title'   => '新计划已创建！',
+                'content' => ':name 已计划于 :date 进行',
+            ],
+            'sms' => [
+                'content' => ':name 已计划于 :date 进行',
+            ],
         ],
     ],
     'subscriber' => [
         'verify' => [
-            'subject' => 'Verify Your Subscription',
-            'content' => 'Click to verify your subscription to :app_name status page.',
-            'title'   => 'Verify your subscription to :app_name status page.',
-            'action'  => 'Verify',
+            'mail' => [
+                'subject' => '验证您的订阅',
+                'content' => '点击验证您对 :app_name 状态页的订阅。',
+                'title'   => '验证您对 :app_name 状态页的订阅。',
+                'action'  => '验证',
+            ],
+        ],
+        'manage' => [
+            'mail' => [
+                'subject' => '管理您的订阅',
+                'content' => '点击管理您对 :app_name 状态页的订阅。',
+                'title'   => '点击管理您对 :app_name 状态页的订阅。',
+                'action'  => '管理订阅',
+            ],
         ],
     ],
     'system' => [
         'test' => [
-            'subject' => 'Ping from Cachet!',
-            'content' => 'This is a test notification from Cachet!',
-            'title'   => '🔔',
+            'mail' => [
+                'subject' => '这是来自 Cachet 的消息！',
+                'content' => '这是来自 Cachet 的测试通知邮件！',
+                'title'   => '🔔',
+            ],
         ],
     ],
     'user' => [
         'invite' => [
-            'subject' => 'Your invitation is inside...',
-            'content' => 'You have been invited to join :app_name status page.',
-            'title'   => 'You\'re invited to join :app_name status page.',
-            'action'  => 'Accept',
+            'mail' => [
+                'subject' => '这是您的邀请函...',
+                'content' => '您已被邀请加入 :app_name 状态页。',
+                'title'   => '您被邀请加入 :app_name 状态页。',
+                'action'  => '接受',
+            ],
         ],
     ],
 ];

@@ -39,7 +39,10 @@ return [
     |
     */
 
-    'extensions' => env('CACHET_EMOJI', false) ? ['AltThree\Emoji\EmojiExtension'] : [],
+    'extensions' => array_filter([
+        env('CACHET_EMOJI', false) ? 'CachetHQ\Emoji\EmojiExtension' : null,
+        env('CACHET_AUTO_TWITTER', true) ? 'CachetHQ\Twitter\TwitterExtension' : null,
+    ]),
 
     /*
     |--------------------------------------------------------------------------
@@ -116,16 +119,41 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Safe Mode
+    | HTML Input
     |--------------------------------------------------------------------------
     |
-    | This option specifies if raw HTML is rendered in the document. Setting
-    | this to true will not render HTML, and false will.
+    | This option specifies how to handle untrusted HTML input.
     |
-    | Default: false
+    | Default: 'strip'
     |
     */
 
-    'safe' => true,
+    'html_input' => 'strip',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Allow Unsafe Links
+    |--------------------------------------------------------------------------
+    |
+    | This option specifies whether to allow risky image URLs and links.
+    |
+    | Default: true
+    |
+    */
+
+    'allow_unsafe_links' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Maximum Nesting Level
+    |--------------------------------------------------------------------------
+    |
+    | This option specifies the maximum permitted block nesting level.
+    |
+    | Default: INF
+    |
+    */
+
+    'max_nesting_level' => INF,
 
 ];

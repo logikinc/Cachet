@@ -47,7 +47,7 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG', false),
+    'debug' => (bool) env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -73,7 +73,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
 
     /*
     |--------------------------------------------------------------------------
@@ -173,33 +173,31 @@ return [
         /*
          * Packages Service Providers...
          */
-        AltThree\Badger\BadgerServiceProvider::class,
-        AltThree\Emoji\EmojiServiceProvider::class,
-        AltThree\Logger\LoggerServiceProvider::class,
-        BackupManager\Laravel\Laravel5ServiceProvider::class,
+        env('APP_DEBUG') ? Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class : null,
         Barryvdh\Cors\ServiceProvider::class,
-        Fideloper\Proxy\TrustedProxyServiceProvider::class,
+        env('APP_DEBUG') ? Barryvdh\Debugbar\ServiceProvider::class : null,
+        CachetHQ\Badger\BadgerServiceProvider::class,
+        CachetHQ\Emoji\EmojiServiceProvider::class,
+        CachetHQ\Twitter\TwitterServiceProvider::class,
         GrahamCampbell\Binput\BinputServiceProvider::class,
         GrahamCampbell\Exceptions\ExceptionsServiceProvider::class,
-        GrahamCampbell\Core\CoreServiceProvider::class,
         GrahamCampbell\Markdown\MarkdownServiceProvider::class,
         GrahamCampbell\Security\SecurityServiceProvider::class,
+        Jenssegers\Date\DateServiceProvider::class,
+        Laravel\Tinker\TinkerServiceProvider::class,
         McCool\LaravelAutoPresenter\AutoPresenterServiceProvider::class,
-        PragmaRX\Google2FA\Vendor\Laravel\ServiceProvider::class,
-        Roumen\Feed\FeedServiceProvider::class,
 
         /*
          * Application Service Providers...
          */
-        CachetHQ\Cachet\Foundation\Providers\AppServiceProvider::class,
-        CachetHQ\Cachet\Foundation\Providers\ComposerServiceProvider::class,
-        CachetHQ\Cachet\Foundation\Providers\ConsoleServiceProvider::class,
-        CachetHQ\Cachet\Foundation\Providers\ConfigServiceProvider::class,
-        CachetHQ\Cachet\Foundation\Providers\EventServiceProvider::class,
-        CachetHQ\Cachet\Foundation\Providers\IntegrationServiceProvider::class,
-        CachetHQ\Cachet\Foundation\Providers\ModuleServiceProvider::class,
-        CachetHQ\Cachet\Foundation\Providers\RepositoryServiceProvider::class,
-        CachetHQ\Cachet\Foundation\Providers\RouteServiceProvider::class,
+        CachetHQ\Cachet\Providers\AppServiceProvider::class,
+        CachetHQ\Cachet\Providers\ComposerServiceProvider::class,
+        CachetHQ\Cachet\Providers\ConsoleServiceProvider::class,
+        CachetHQ\Cachet\Providers\ConfigServiceProvider::class,
+        CachetHQ\Cachet\Providers\EventServiceProvider::class,
+        CachetHQ\Cachet\Providers\IntegrationServiceProvider::class,
+        CachetHQ\Cachet\Providers\RepositoryServiceProvider::class,
+        CachetHQ\Cachet\Providers\RouteServiceProvider::class,
 
     ]),
 
@@ -220,11 +218,14 @@ return [
         'Artisan'      => Illuminate\Support\Facades\Artisan::class,
         'Auth'         => Illuminate\Support\Facades\Auth::class,
         'Blade'        => Illuminate\Support\Facades\Blade::class,
+        'Broadcast'    => Illuminate\Support\Facades\Broadcast::class,
+        'Bus'          => Illuminate\Support\Facades\Bus::class,
         'Cache'        => Illuminate\Support\Facades\Cache::class,
         'Config'       => Illuminate\Support\Facades\Config::class,
         'Cookie'       => Illuminate\Support\Facades\Cookie::class,
         'Crypt'        => Illuminate\Support\Facades\Crypt::class,
         'DB'           => Illuminate\Support\Facades\DB::class,
+        'Eloquent'     => Illuminate\Database\Eloquent\Model::class,
         'Event'        => Illuminate\Support\Facades\Event::class,
         'File'         => Illuminate\Support\Facades\File::class,
         'Gate'         => Illuminate\Support\Facades\Gate::class,

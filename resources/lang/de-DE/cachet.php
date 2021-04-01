@@ -23,19 +23,20 @@ return [
         'group' => [
             'other' => 'Andere Komponenten',
         ],
+        'select_all'   => 'Alles auswählen',
+        'deselect_all' => 'Alles abwählen',
     ],
 
     // Incidents
     'incidents' => [
-        'none'          => 'Es liegen keine Ereignisse vor',
-        'past'          => 'Vergangene Ereignisse',
-        'previous_week' => 'Vorherige Woche',
-        'next_week'     => 'Nächste Woche',
-        'stickied'      => 'Angepinnte Vorfälle',
-        'scheduled'     => 'Geplante Wartungen',
-        'scheduled_at'  => ', geplant :timestamp',
-        'posted'        => 'Veröffentlicht :timestamp',
-        'status'        => [
+        'none'         => 'Es liegen keine Ereignisse vor',
+        'past'         => 'Vergangene Ereignisse',
+        'stickied'     => 'Angepinnte Vorfälle',
+        'scheduled'    => 'Wartungsarbeiten',
+        'scheduled_at' => ', geplant :timestamp',
+        'posted'       => 'Posted :timestamp by :username',
+        'posted_at'    => 'Veröffentlicht am :timestamp',
+        'status'       => [
             1 => 'Untersuchungen laufen',
             2 => 'Identifiziert',
             3 => 'Unter Beobachtung',
@@ -54,9 +55,9 @@ return [
 
     // Service Status
     'service' => [
-        'good'  => '[0,1] System funktioniert einwandfrei|[2,Inf] Alle Systeme funktionieren einwandfrei',
-        'bad'   => '[0,1] System hat momentan Probleme|[2,Inf] Mehrere Systeme haben momentan Probleme',
-        'major' => '[0,1] System hat ein schwerwiegendes Problem|[2,Inf] Mehrere Systeme haben ein schwerwiegendes Problem',
+        'good'  => '[0,1]System funktioniert|[2,*]Alle Systeme funktionieren',
+        'bad'   => '[0,1] Das System hat momentan Probleme|[2,*] Mehrere Systeme haben momentan Probleme',
+        'major' => '[0,1] Das System hat ein schwerwiegendes Problem|[2,*] Mehrere Systeme haben ein schwerwiegendes Problem',
     ],
 
     'api' => [
@@ -76,22 +77,29 @@ return [
 
     // Subscriber
     'subscriber' => [
-        'subscribe'   => 'Abonnieren Sie um die neuesten Updates zu erhalten.',
-        'unsubscribe' => 'Unsubscribe at :link',
-        'button'      => 'Abonnieren',
-        'manage'      => [
-            'no_subscriptions' => 'Du hast im Augenblick alle Updates abonniert.',
-            'my_subscriptions' => 'Du hast im Augenblick folgende Updates abonniert.',
+        'subscribe'           => 'Abonniere Status- und Vorfalländerungen',
+        'unsubscribe'         => 'Abmelden',
+        'button'              => 'Abonnieren',
+        'manage_subscription' => 'Abonnements verwalten',
+        'manage'              => [
+            'notifications'       => 'Benachrichtigungen',
+            'notifications_for'   => 'Verwalten von Benachrichtigungen für',
+            'no_subscriptions'    => 'Du hast im Augenblick alle Updates abonniert.',
+            'update_subscription' => 'Update-Abonnement',
+            'my_subscriptions'    => 'Du hast im Augenblick folgende Updates abonniert.',
+            'manage_at_link'      => 'Verwalte deine Abonnements unter :link',
         ],
         'email' => [
-            'subscribe'          => 'Aktualisierungen per E-Mail abonnieren.',
-            'subscribed'         => 'Sie haben E-Mail-Benachrichtigungen abonniert, überprüfen Sie bitte Ihre E-Mail, um Ihr Abonnement zu bestätigen.',
-            'verified'           => 'Ihre E-Mail-Abonnement ist bestätigt worden. Danke!',
-            'manage'             => 'Verwalte deine Abonnements',
-            'unsubscribe'        => 'Abonnement widerrufen.',
-            'unsubscribed'       => 'Ihre E-Mail-Abonnement wurde beendet.',
-            'failure'            => 'Beim aktivieren des Abonnements ist ein Fehler aufgetreten.',
-            'already-subscribed' => 'Abonnement für :email konnte nicht registriert werden, da die E-Mail Adresse schon registriert ist.',
+            'manage_subscription' => 'We\'ve sent you an email, please click the link to manage your subscription',
+            'subscribe'           => 'Aktualisierungen per E-Mail abonnieren.',
+            'subscribed'          => 'Sie haben E-Mail-Benachrichtigungen abonniert, überprüfen Sie bitte Ihre E-Mail, um Ihr Abonnement zu bestätigen.',
+            'updated-subscribe'   => 'You\'ve succesfully updated your subscriptions.',
+            'verified'            => 'Ihre E-Mail-Abonnement ist bestätigt worden. Danke!',
+            'manage'              => 'Verwalte deine Abonnements',
+            'unsubscribe'         => 'Abonnement widerrufen.',
+            'unsubscribed'        => 'Ihre E-Mail-Abonnement wurde beendet.',
+            'failure'             => 'Beim aktivieren des Abonnements ist ein Fehler aufgetreten.',
+            'already-subscribed'  => 'Abonnement für :email konnte nicht registriert werden, da die E-Mail Adresse schon registriert ist.',
         ],
     ],
 
@@ -118,9 +126,18 @@ return [
         ],
     ],
 
+    // Meta descriptions
+    'meta' => [
+        'description' => [
+            'incident'  => 'Details und Aktualisierung über den :name Vorfall, die am :date aufgetreten sind',
+            'schedule'  => 'Details zu den geplanten Wartungszeitraum :name beginnend ab :startDate',
+            'subscribe' => 'Abonniere :app um Updates von Vorfällen und geplanten Wartungszeiten zu erhalten',
+            'overview'  => 'Bleiben sie auf dem Laufenden mit den neuesten Service-Updates von :app.',
+        ],
+    ],
+
     // Other
     'home'            => 'Startseite',
-    'description'     => 'Bleiben sie auf dem Laufenden mit den neuesten Service-Updates von :app.',
     'powered_by'      => 'Powered by <a href="https://cachethq.io" class="links">Cachet</a>.',
     'timezone'        => 'Uhrzeiten werden in :timezone angezeigt.',
     'about_this_site' => 'Über diese Seite',

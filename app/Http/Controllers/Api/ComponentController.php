@@ -11,11 +11,10 @@
 
 namespace CachetHQ\Cachet\Http\Controllers\Api;
 
-use CachetHQ\Cachet\Bus\Commands\Component\AddComponentCommand;
+use CachetHQ\Cachet\Bus\Commands\Component\CreateComponentCommand;
 use CachetHQ\Cachet\Bus\Commands\Component\RemoveComponentCommand;
 use CachetHQ\Cachet\Bus\Commands\Component\UpdateComponentCommand;
 use CachetHQ\Cachet\Models\Component;
-use CachetHQ\Cachet\Models\Tag;
 use GrahamCampbell\Binput\Facades\Binput;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\QueryException;
@@ -29,12 +28,16 @@ class ComponentController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getComponents()
+    public function index()
     {
         if (app(Guard::class)->check()) {
             $components = Component::query();
         } else {
             $components = Component::enabled();
+        }
+
+        if ($tags = Binput::get('tags')) {
+            $components->withAnyTags($tags);
         }
 
         $components->search(Binput::except(['sort', 'order', 'per_page']));
@@ -57,7 +60,7 @@ class ComponentController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getComponent(Component $component)
+    public function show(Component $component)
     {
         return $this->item($component);
     }
@@ -67,10 +70,10 @@ class ComponentController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function postComponents()
+    public function store()
     {
         try {
-            $component = dispatch(new AddComponentCommand(
+            $component = execute(new CreateComponentCommand(
                 Binput::get('name'),
                 Binput::get('description'),
                 Binput::get('status'),
@@ -78,24 +81,11 @@ class ComponentController extends AbstractApiController
                 Binput::get('order'),
                 Binput::get('group_id'),
                 (bool) Binput::get('enabled', true),
-                Binput::get('meta', null)
+                Binput::get('meta'),
+                Binput::get('tags')
             ));
         } catch (QueryException $e) {
             throw new BadRequestHttpException();
-        }
-
-        if (Binput::has('tags')) {
-            // The component was added successfully, so now let's deal with the tags.
-            $tags = preg_split('/ ?, ?/', Binput::get('tags'));
-
-            // For every tag, do we need to create it?
-            $componentTags = array_map(function ($taggable) use ($component) {
-                return Tag::firstOrCreate([
-                    'name' => $taggable,
-                ])->id;
-            }, $tags);
-
-            $component->tags()->sync($componentTags);
         }
 
         return $this->item($component);
@@ -108,10 +98,10 @@ class ComponentController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function putComponent(Component $component)
+    public function update(Component $component)
     {
         try {
-            dispatch(new UpdateComponentCommand(
+            execute(new UpdateComponentCommand(
                 $component,
                 Binput::get('name'),
                 Binput::get('description'),
@@ -119,22 +109,13 @@ class ComponentController extends AbstractApiController
                 Binput::get('link'),
                 Binput::get('order'),
                 Binput::get('group_id'),
-                (bool) Binput::get('enabled', true),
-                Binput::get('meta', null)
+                Binput::get('enabled', $component->enabled),
+                Binput::get('meta'),
+                Binput::get('tags'),
+                (bool) Binput::get('silent', false)
             ));
         } catch (QueryException $e) {
             throw new BadRequestHttpException();
-        }
-
-        if (Binput::has('tags')) {
-            $tags = preg_split('/ ?, ?/', Binput::get('tags'));
-
-            // For every tag, do we need to create it?
-            $componentTags = array_map(function ($taggable) use ($component) {
-                return Tag::firstOrCreate(['name' => $taggable])->id;
-            }, $tags);
-
-            $component->tags()->sync($componentTags);
         }
 
         return $this->item($component);
@@ -147,9 +128,9 @@ class ComponentController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteComponent(Component $component)
+    public function destroy(Component $component)
     {
-        dispatch(new RemoveComponentCommand($component));
+        execute(new RemoveComponentCommand($component));
 
         return $this->noContent();
     }

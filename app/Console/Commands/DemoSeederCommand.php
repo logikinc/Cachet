@@ -56,14 +56,14 @@ class DemoSeederCommand extends Command
     /**
      * The settings repository.
      *
-     * @var \CachetHQ\Cache\Settings\Repository
+     * @var \CachetHQ\Cachet\Settings\Repository
      */
     protected $settings;
 
     /**
      * Create a new demo seeder command instance.
      *
-     * @param \CachetHQ\Cache\Settings\Repository $settings
+     * @param \CachetHQ\Cachet\Settings\Repository $settings
      *
      * @return void
      */
@@ -79,12 +79,13 @@ class DemoSeederCommand extends Command
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         if (!$this->confirmToProceed()) {
             return;
         }
 
+        $this->seedUsers();
         $this->seedActions();
         $this->seedComponentGroups();
         $this->seedComponents();
@@ -95,7 +96,6 @@ class DemoSeederCommand extends Command
         $this->seedSchedules();
         $this->seedSettings();
         $this->seedSubscribers();
-        $this->seedUsers();
 
         $this->info('Database seeded with demo data successfully!');
     }
@@ -223,6 +223,7 @@ EINCIDENT;
                 'component_id' => 0,
                 'visible'      => 1,
                 'stickied'     => false,
+                'user_id'      => 1,
                 'occurred_at'  => Carbon::now(),
             ],
             [
@@ -232,6 +233,7 @@ EINCIDENT;
                 'component_id' => 0,
                 'visible'      => 1,
                 'stickied'     => false,
+                'user_id'      => 1,
                 'occurred_at'  => Carbon::now(),
             ],
         ];
@@ -394,6 +396,9 @@ EINCIDENT;
                 'key'   => 'app_incident_days',
                 'value' => '7',
             ], [
+                'key'   => 'app_refresh_rate',
+                'value' => '0',
+            ], [
                 'key'   => 'app_analytics',
                 'value' => 'UA-58442674-3',
             ], [
@@ -439,7 +444,7 @@ EINCIDENT;
             [
                 'username' => 'test',
                 'password' => 'test123',
-                'email'    => 'test@test.com',
+                'email'    => 'test@example.com',
                 'level'    => User::LEVEL_ADMIN,
                 'api_key'  => '9yMHsdioQosnyVK4iCVR',
             ],

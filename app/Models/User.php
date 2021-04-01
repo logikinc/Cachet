@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 /**
  * This is the user model.
@@ -25,8 +26,8 @@ use Illuminate\Support\Facades\Hash;
  */
 class User extends Authenticatable
 {
-    use Notifiable, ValidatingTrait;
-
+    use Notifiable;
+    use ValidatingTrait;
     /**
      * The admin level of user.
      *
@@ -163,18 +164,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Returns a Gravatar URL for the users email address.
-     *
-     * @param int $size
-     *
-     * @return string
-     */
-    public function getGravatarAttribute($size = 200)
-    {
-        return sprintf('https://www.gravatar.com/avatar/%s?size=%d', md5(strtolower($this->email)), $size);
-    }
-
-    /**
      * Find by api_key, or throw an exception.
      *
      * @param string   $token
@@ -198,7 +187,7 @@ class User extends Authenticatable
      */
     public static function generateApiKey()
     {
-        return str_random(20);
+        return Str::random(20);
     }
 
     /**
